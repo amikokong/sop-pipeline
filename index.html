@@ -632,21 +632,41 @@
       <div class="card">
         <div class="card-title">
           <div class="card-title-icon icon-teal">👁️</div>
-          Pratonton artikel penuh
-        </div>
-        <div class="artikel-preview">
-        <div class="artikel-preview">
-          <div class="artikel-meta">
-            <span>📅 <span id="prev-tarikh"></span></span>
-            <span>📱 <span id="prev-platform"></span></span>
-            <span>🕗 8–11 malam MYT</span>
-            <span>✍️ Ahmad Faezal</span>
-          </div>
-          <h2 id="prev-tajuk"></h2>
-          <div id="prev-artikel"></div>
+          Pratonton &amp; edit akhir
+          <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-500)">Edit terus sebelum hantar</span>
         </div>
 
-        <!-- Thumbnail preview dalam pratonton -->
+        <!-- Meta info -->
+        <div class="artikel-meta" style="margin-bottom:14px;">
+          <span>📅 <span id="prev-tarikh"></span></span>
+          <span>📱 <span id="prev-platform"></span></span>
+          <span>🕗 8–11 malam MYT</span>
+          <span>✍️ Ahmad Faezal</span>
+        </div>
+
+        <!-- Tajuk boleh edit -->
+        <div class="block-label" style="margin-bottom:6px;">
+          Tajuk artikel
+          <span id="tajuk-wc" style="float:right;font-weight:400;color:var(--gray-500)"></span>
+        </div>
+        <input type="text" id="edit-tajuk"
+          style="font-size:15px;font-weight:600;padding:10px 14px;margin-bottom:14px;border-radius:var(--radius-sm);width:100%;border:1.5px solid var(--gray-100);"
+          oninput="syncEditState()">
+
+        <!-- Artikel boleh edit -->
+        <div class="block-label" style="margin-bottom:6px;">
+          Artikel penuh
+          <span id="artikel-wc" style="float:right;font-weight:400;color:var(--gray-500)"></span>
+        </div>
+        <textarea id="edit-artikel"
+          style="width:100%;min-height:260px;font-size:14px;line-height:1.8;padding:14px;border:1.5px solid var(--gray-100);border-radius:var(--radius-sm);resize:vertical;font-family:inherit;"
+          oninput="updateArtikelWC()"></textarea>
+        <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:16px;">
+          <button class="btn" style="font-size:12px;padding:5px 12px" onclick="resetArtikel()">↩ Pulih asal</button>
+          <span id="artikel-edited-badge" class="hidden" style="font-size:11px;padding:3px 9px;background:var(--amber-light);color:var(--amber);border:1px solid #FAC775;border-radius:10px;display:inline-flex;align-items:center;">✏️ Diedit</span>
+        </div>
+
+        <!-- Thumbnail -->
         <div id="prev-thumb-wrap" class="hidden" style="margin-bottom:16px;">
           <div class="block-label">Thumbnail yang akan dihantar</div>
           <div style="display:flex;gap:14px;align-items:center;padding:12px;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:var(--radius-md);">
@@ -659,8 +679,20 @@
         </div>
 
         <hr class="divider">
-        <div class="block-label">Caption yang akan dihantar ke Facebook</div>
-        <div class="content-block" id="prev-caption"></div>
+
+        <!-- Caption boleh edit -->
+        <div class="block-label" style="margin-bottom:6px;">
+          Caption Facebook
+          <span id="caption-wc" style="float:right;font-weight:400;color:var(--gray-500)"></span>
+        </div>
+        <textarea id="edit-caption"
+          style="width:100%;min-height:180px;font-size:13px;line-height:1.7;padding:12px 14px;border:1.5px solid var(--gray-100);border-radius:var(--radius-sm);resize:vertical;font-family:inherit;"
+          oninput="updateCaptionWC()"></textarea>
+        <div style="display:flex;gap:8px;margin-top:6px;margin-bottom:16px;">
+          <button class="btn" style="font-size:12px;padding:5px 12px" onclick="resetCaption()">↩ Pulih asal</button>
+          <span id="caption-edited-badge" class="hidden" style="font-size:11px;padding:3px 9px;background:var(--amber-light);color:var(--amber);border:1px solid #FAC775;border-radius:10px;display:inline-flex;align-items:center;">✏️ Diedit</span>
+        </div>
+
         <hr class="divider">
         <div class="meta-info">
           <div class="meta-item">Platform: <strong id="prev-platform2"></strong></div>
@@ -756,7 +788,7 @@
 
 </main>
 
-<footer>SOP Pipeline v1.5 · MyTVET Skills Academy · Claude AI + Canva + Zapier</footer>
+<footer>SOP Pipeline v1.6 · MyTVET Skills Academy · Claude AI + Canva + Zapier</footer>
 
 <script>
 var state = {
@@ -958,14 +990,53 @@ function toggleFeedback(){
   document.getElementById('feedback-area').classList.toggle('hidden');
 }
 
+function countWords(t){ return t.trim().split(/\s+/).filter(Boolean).length; }
+
+function updateArtikelWC(){
+  var wc=countWords(document.getElementById('edit-artikel').value);
+  document.getElementById('artikel-wc').textContent=wc+' patah perkataan';
+  document.getElementById('artikel-edited-badge').classList.toggle('hidden', document.getElementById('edit-artikel').value===state.artikel);
+}
+
+function updateCaptionWC(){
+  var wc=countWords(document.getElementById('edit-caption').value);
+  document.getElementById('caption-wc').textContent=wc+' aksara';
+  document.getElementById('caption-edited-badge').classList.toggle('hidden', document.getElementById('edit-caption').value===state.caption);
+}
+
+function syncEditState(){
+  document.getElementById('caption-edited-badge').classList.remove('hidden');
+}
+
+function resetArtikel(){
+  document.getElementById('edit-artikel').value=state.artikel;
+  updateArtikelWC();
+}
+
+function resetCaption(){
+  document.getElementById('edit-caption').value=state.caption;
+  updateCaptionWC();
+}
+
 function lulusKandungan(){
   document.getElementById('prev-tarikh').textContent=new Date().toLocaleDateString('ms-MY',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   document.getElementById('prev-platform').textContent=platformLabel();
   document.getElementById('prev-platform2').textContent=platformLabel();
   document.getElementById('prev-hashtag').textContent=state.hashtag;
-  document.getElementById('prev-tajuk').textContent=state.tajukTerpilih;
-  document.getElementById('prev-artikel').innerHTML=state.artikel.split('\n').map(function(p){ return p?'<p>'+p+'</p>':'' }).join('');
-  document.getElementById('prev-caption').textContent=state.caption;
+
+  /* Populate editable fields */
+  document.getElementById('edit-tajuk').value=state.tajukTerpilih;
+  document.getElementById('edit-artikel').value=state.artikel;
+  document.getElementById('edit-caption').value=state.caption;
+
+  /* Reset edit badges */
+  document.getElementById('artikel-edited-badge').classList.add('hidden');
+  document.getElementById('caption-edited-badge').classList.add('hidden');
+
+  /* Word counts */
+  updateArtikelWC();
+  updateCaptionWC();
+
   setStep(4); showPanel('panel-preview');
 }
 
@@ -1106,10 +1177,13 @@ lulusKandungan = function(){
     prevNoThumb.classList.remove('hidden');
   }
 };
-
-/* Update finalHantar to include image info */
-var _origFinalHantar = finalHantar;
 finalHantar = function(){
+  var finalTajuk = document.getElementById('edit-tajuk').value.trim() || state.tajukTerpilih;
+  var finalArtikel = document.getElementById('edit-artikel').value.trim() || state.artikel;
+  var finalCaption = document.getElementById('edit-caption').value.trim() || state.caption;
+  var artikelEdited = finalArtikel !== state.artikel;
+  var captionEdited = finalCaption !== state.caption;
+
   setStep(5); showPanel('panel-hantar');
   setTimeout(function(){
     document.getElementById('send-spinner').style.display='none';
@@ -1120,13 +1194,15 @@ finalHantar = function(){
     var hasImg = thumbData.dataUrl !== null;
     document.getElementById('post-detail-text').innerHTML =
       '<strong>Page:</strong> MyTVET Skills Academy<br>'+
-      '<strong>Tajuk:</strong> '+state.tajukTerpilih+'<br>'+
+      '<strong>Tajuk:</strong> '+finalTajuk+(artikelEdited?' <span style="font-size:11px;color:var(--amber)">[diedit]</span>':'')+'<br>'+
       '<strong>Platform:</strong> '+platformLabel()+'<br>'+
-      '<strong>Gambar:</strong> '+(hasImg ? '✅ '+thumbData.fileName : '⚠️ Tiada gambar')+'<br>'+
+      '<strong>Gambar:</strong> '+(hasImg?'✅ '+thumbData.fileName:'⚠️ Tiada gambar')+'<br>'+
+      '<strong>Caption:</strong> '+(captionEdited?'✏️ Caption diedit':'Seperti draf asal')+'<br>'+
+      '<strong>Patah perkataan:</strong> '+countWords(finalArtikel)+' patah<br>'+
       '<strong>Masa terbit:</strong> '+tarikh+', '+masa+'<br>'+
       '<strong>Status:</strong> Diterbitkan melalui Zapier → Facebook Pages';
     document.getElementById('send-result').classList.remove('hidden');
-    var rec = {tajuk:state.tajukTerpilih, channel:state.channel, platform:platformLabel(), masa:tarikh+' '+masa, hasImg:hasImg};
+    var rec = {tajuk:finalTajuk, channel:state.channel, platform:platformLabel(), masa:tarikh+' '+masa, hasImg:hasImg, edited:(artikelEdited||captionEdited)};
     state.history.unshift(rec);
     if(state.history.length>50) state.history.pop();
     localStorage.setItem('sop-history', JSON.stringify(state.history));
