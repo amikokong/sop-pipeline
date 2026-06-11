@@ -252,27 +252,8 @@
   .ppc-name { font-size: 13px; font-weight: 600; color: var(--gray-800); margin-bottom: 3px; }
   .ppc-size { font-size: 11px; color: var(--gray-500); }
 
-  .thumb-choice {
-    border: 2px solid var(--gray-100); border-radius: var(--radius-md);
-    overflow: hidden; cursor: pointer; transition: all .15s;
-    background: var(--gray-50); position: relative;
-  }
-  .thumb-choice:hover { border-color: var(--teal-mid); transform: translateY(-2px); }
-  .thumb-choice.selected { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(29,158,117,0.15); }
-  .thumb-choice img { width: 100%; display: block; background: var(--gray-100); min-height: 80px; object-fit: cover; }
-  .thumb-choice-label {
-    padding: 6px 8px; font-size: 11px; font-weight: 600;
-    color: var(--gray-500); text-align: center;
-    background: var(--white); border-top: 1px solid var(--gray-100);
-  }
-  .thumb-choice.selected .thumb-choice-label { color: var(--teal); background: var(--teal-light); }
-  .thumb-choice-check {
-    position: absolute; top: 6px; right: 6px;
-    width: 22px; height: 22px; border-radius: 50%;
-    background: var(--teal); color: white; font-size: 12px;
-    display: none; align-items: center; justify-content: center;
-  }
-  .thumb-choice.selected .thumb-choice-check { display: flex; }
+  /* Thumbnail upload zone */
+  #thumb-upload-zone:hover { border-color: var(--teal-mid) !important; background: var(--teal-light) !important; }
 
   /* Artikel preview */
   .artikel-preview {
@@ -570,62 +551,46 @@
       <div class="card" id="thumb-card">
         <div class="card-title">
           <div class="card-title-icon icon-blue">🖼️</div>
-          Jana thumbnail via Canva
-          <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-500);display:flex;align-items:center;gap:4px;">
-            <span style="width:8px;height:8px;border-radius:50%;background:#1D9E75;display:inline-block;"></span>Canva disambung
-          </span>
+          Thumbnail posting
+          <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-500)">Jana di Canva → muat turun → upload di sini</span>
         </div>
 
-        <!-- STEP A: Pilih platform -->
-        <div id="thumb-step-platform">
-          <div class="block-label" style="margin-bottom:10px">Langkah 1 — Pilih platform</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="platform-pick-grid">
-            <div class="platform-pick-card" data-p="fb" onclick="pilihPlatformThumb('fb',this)">
-              <div class="ppc-icon">📘</div>
-              <div class="ppc-name">Facebook</div>
-              <div class="ppc-size">1200 × 630 px</div>
+        <!-- Upload zone -->
+        <div id="thumb-upload-zone"
+          style="border:2px dashed var(--gray-100);border-radius:var(--radius-md);padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--gray-50);"
+          onclick="document.getElementById('thumb-file-input').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--teal-mid)';this.style.background='var(--teal-light)'"
+          ondragleave="this.style.borderColor='var(--gray-100)';this.style.background='var(--gray-50)'"
+          ondrop="handleThumbDrop(event)">
+          <div style="font-size:28px;margin-bottom:8px">🖼️</div>
+          <div style="font-size:14px;font-weight:500;color:var(--gray-800);margin-bottom:4px">Klik atau seret gambar ke sini</div>
+          <div style="font-size:12px;color:var(--gray-500)">PNG, JPG · Maksimum 4MB · Semua format platform diterima</div>
+          <input type="file" id="thumb-file-input" accept="image/*" style="display:none" onchange="handleThumbFile(this)">
+        </div>
+
+        <!-- Preview selepas upload -->
+        <div id="thumb-preview-area" class="hidden" style="margin-top:14px">
+          <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+            <div style="flex-shrink:0;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--gray-100);max-width:280px;width:100%">
+              <img id="thumb-preview-img" src="" alt="Preview thumbnail" style="width:100%;display:block;object-fit:cover;">
             </div>
-            <div class="platform-pick-card" data-p="ig" onclick="pilihPlatformThumb('ig',this)">
-              <div class="ppc-icon">📷</div>
-              <div class="ppc-name">Instagram</div>
-              <div class="ppc-size">1080 × 1080 px</div>
-            </div>
-            <div class="platform-pick-card" data-p="story" onclick="pilihPlatformThumb('story',this)">
-              <div class="ppc-icon">📱</div>
-              <div class="ppc-name">Story / TikTok</div>
-              <div class="ppc-size">1080 × 1920 px</div>
-            </div>
-            <div class="platform-pick-card" data-p="yt" onclick="pilihPlatformThumb('yt',this)">
-              <div class="ppc-icon">▶️</div>
-              <div class="ppc-name">YouTube</div>
-              <div class="ppc-size">1280 × 720 px</div>
+            <div style="flex:1;min-width:160px;">
+              <div class="badge badge-success" style="margin-bottom:10px">✅ Thumbnail sedia</div>
+              <div style="font-size:13px;color:var(--gray-500);margin-bottom:12px;line-height:1.7;" id="thumb-file-info"></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-danger" style="font-size:12px;padding:6px 12px" onclick="buangThumb()">🗑 Buang</button>
+                <button class="btn" style="font-size:12px;padding:6px 12px" onclick="document.getElementById('thumb-file-input').click()">↩ Tukar gambar</button>
+              </div>
             </div>
           </div>
-          <div class="btn-row" style="margin-top:14px">
-            <button class="btn btn-primary" id="btn-jana-thumb" onclick="janaThumbCanva()" disabled>🎨 Jana 3 pilihan thumbnail</button>
+          <div style="margin-top:10px;padding:10px 12px;background:var(--teal-light);border:1px solid #9FE1CB;border-radius:var(--radius-sm);font-size:12px;color:var(--teal);">
+            💡 Gambar ini akan dihantar bersama caption ke Facebook Pages melalui Zapier apabila anda tekan Hantar.
           </div>
         </div>
 
-        <!-- STEP B: Generating -->
-        <div id="thumb-step-generating" class="hidden">
-          <div class="status-bar" id="thumb-gen-bar">
-            <div class="spinner"></div>
-            <span id="thumb-gen-txt">Menyambung ke Canva dan menjana reka bentuk...</span>
-          </div>
-          <div style="font-size:13px;color:var(--gray-500);margin-top:8px;" id="thumb-gen-steps"></div>
-        </div>
-
-        <!-- STEP C: Pilih 1 dari 3 -->
-        <div id="thumb-step-pilih" class="hidden">
-          <div class="block-label" style="margin-bottom:12px">Langkah 2 — Pilih 1 reka bentuk</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="thumb-choices-grid"></div>
-          <div class="btn-row" style="margin-top:14px">
-            <button class="btn btn-success" id="btn-simpan-thumb" onclick="simpanThumbTerpilih()" disabled>✓ Simpan ke Canva &amp; teruskan</button>
-            <button class="btn" onclick="resetThumb()">↩ Pilih platform lain</button>
-          </div>
-          <div id="thumb-saved-info" class="hidden" style="margin-top:12px;padding:12px;background:var(--green-light);border:1px solid #C0DD97;border-radius:var(--radius-sm);font-size:13px;color:var(--green);">
-            ✅ Thumbnail disimpan ke Canva anda. <a id="thumb-canva-link" href="#" target="_blank" style="color:var(--teal);font-weight:500;">Buka & edit di Canva →</a>
-          </div>
+        <!-- Tip jana di Canva -->
+        <div id="thumb-canva-tip" style="margin-top:12px;padding:10px 12px;background:var(--blue-light);border:1px solid #B5D4F4;border-radius:var(--radius-sm);font-size:12px;color:var(--blue);line-height:1.7;">
+          🎨 <strong>Jana thumbnail di Canva:</strong> Taip dalam chat Claude — <em>"jana thumbnail Facebook untuk [tajuk]"</em> — saya akan buat 3 pilihan terus ke Canva anda. Muat turun → upload di sini.
         </div>
       </div>
 
@@ -657,6 +622,7 @@
           Pratonton artikel penuh
         </div>
         <div class="artikel-preview">
+        <div class="artikel-preview">
           <div class="artikel-meta">
             <span>📅 <span id="prev-tarikh"></span></span>
             <span>📱 <span id="prev-platform"></span></span>
@@ -666,6 +632,19 @@
           <h2 id="prev-tajuk"></h2>
           <div id="prev-artikel"></div>
         </div>
+
+        <!-- Thumbnail preview dalam pratonton -->
+        <div id="prev-thumb-wrap" class="hidden" style="margin-bottom:16px;">
+          <div class="block-label">Thumbnail yang akan dihantar</div>
+          <div style="display:flex;gap:14px;align-items:center;padding:12px;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:var(--radius-md);">
+            <img id="prev-thumb-img" src="" alt="Thumbnail" style="width:160px;border-radius:var(--radius-sm);border:1px solid var(--gray-100);object-fit:cover;">
+            <div style="font-size:13px;color:var(--gray-500);line-height:1.8;" id="prev-thumb-info"></div>
+          </div>
+        </div>
+        <div id="prev-no-thumb" style="margin-bottom:16px;padding:10px 14px;background:var(--amber-light);border:1px solid #FAC775;border-radius:var(--radius-sm);font-size:13px;color:var(--amber);">
+          ⚠️ Tiada thumbnail — posting akan dihantar tanpa gambar. <span style="cursor:pointer;text-decoration:underline;" onclick="balikSemak()">Balik semak untuk upload →</span>
+        </div>
+
         <hr class="divider">
         <div class="block-label">Caption yang akan dihantar ke Facebook</div>
         <div class="content-block" id="prev-caption"></div>
@@ -764,7 +743,7 @@
 
 </main>
 
-<footer>SOP Pipeline v1.3 · MyTVET Skills Academy · Dibina dengan Claude AI + Canva + Zapier</footer>
+<footer>SOP Pipeline v1.4 · MyTVET Skills Academy · Claude AI + Canva + Zapier</footer>
 
 <script>
 var state = {
@@ -1014,174 +993,116 @@ function renderHistory(){
   }).join('');
 }
 
-/* ===== THUMBNAIL ENGINE — CANVA INTEGRATION ===== */
-var thumb = {
-  platform: null,
-  selectedCandidate: null,
-  candidates: [],
-  jobId: null,
-  platformMeta:{
-    fb:{label:'Facebook Post',type:'facebook_post',ratio:'aspect-ratio:16/9'},
-    ig:{label:'Instagram Post',type:'instagram_post',ratio:'aspect-ratio:1/1'},
-    story:{label:'Story / TikTok',type:'your_story',ratio:'aspect-ratio:9/16'},
-    yt:{label:'YouTube Thumbnail',type:'youtube_thumbnail',ratio:'aspect-ratio:16/9'}
-  },
-  palettes:{}
-};
+/* ===== THUMBNAIL UPLOAD ENGINE ===== */
+var thumbData = { file: null, dataUrl: null, fileName: '', fileSize: '' };
 
-function pilihPlatformThumb(p, el){
-  thumb.platform=p;
-  document.querySelectorAll('.platform-pick-card').forEach(function(c){ c.classList.remove('selected'); });
-  el.classList.add('selected');
-  document.getElementById('btn-jana-thumb').disabled=false;
-  thumb.selectedCandidate=null;
-  thumb.candidates=[];
-  document.getElementById('thumb-step-pilih').classList.add('hidden');
-  document.getElementById('thumb-saved-info').classList.add('hidden');
+function handleThumbFile(input){
+  var file = input.files[0];
+  if(!file) return;
+  processThumbFile(file);
 }
 
-function janaThumbCanva(){
-  if(!thumb.platform){ alert('Sila pilih platform dahulu.'); return; }
-  var pm=thumb.platformMeta[thumb.platform];
-  var tajuk=state.tajukTerpilih||'Kandungan terkini MyTVET Skills Academy';
-  var topik=(state.tajuk||'AI Technology').split('(')[0].split('!')[0].trim();
-  var jenisMap={artikel:'ANALISIS',pendek:'ARTIKEL',iklan:'PROMOSI',santai:'SANTAI',edu:'TUTORIAL',berita:'BERITA'};
-  var jenisTag=jenisMap[state.jenis]||'KANDUNGAN';
-  var channel=state.channel||'MyTVET Skills Academy';
-
-  var query='Modern '+pm.label+' thumbnail for Malaysian tech educator '+channel+'. Topic: '+topik+'. Headline: "'+tajuk+'". Malaysian flag color theme: red #CC0001, navy blue #003478, yellow #FFD100, white. Content type badge: "'+jenisTag+'". Bold typography, dynamic tech visual elements, professional news/education style. MyTVET Skills Academy brand. Ahmad Faezal geopolitics analyst persona. Dark background with Malaysian patriotic accent colors. High contrast, eye-catching, mobile-first design.';
-
-  document.getElementById('thumb-step-platform').classList.add('hidden');
-  document.getElementById('thumb-step-generating').classList.remove('hidden');
-  document.getElementById('thumb-step-pilih').classList.add('hidden');
-
-  var steps=['Menyambung ke Canva AI...','Menganalisis tajuk dan topik...','Menjana 3 reka bentuk '+pm.label+'...','Memproses imej dan elemen visual...'];
-  var si=0;
-  document.getElementById('thumb-gen-steps').innerHTML='';
-  var iv=setInterval(function(){
-    if(si<steps.length){
-      document.getElementById('thumb-gen-txt').textContent=steps[si];
-      document.getElementById('thumb-gen-steps').innerHTML+='<div style="padding:3px 0">⟳ '+steps[si]+'</div>';
-      si++;
-    }
-  },900);
-
-  sendPrompt('JANA_THUMB::'+thumb.platform+'::'+pm.type+'::'+tajuk+'::'+topik+'::'+jenisTag+'::'+channel);
-
-  setTimeout(function(){
-    clearInterval(iv);
-  },5000);
+function handleThumbDrop(e){
+  e.preventDefault();
+  document.getElementById('thumb-upload-zone').style.borderColor='var(--gray-100)';
+  document.getElementById('thumb-upload-zone').style.background='var(--gray-50)';
+  var file = e.dataTransfer.files[0];
+  if(!file || !file.type.startsWith('image/')) { alert('Sila drop fail imej (PNG atau JPG) sahaja.'); return; }
+  processThumbFile(file);
 }
 
-function terimaCandidatesThumb(candidates, jobId){
-  thumb.candidates=candidates;
-  thumb.jobId=jobId;
-  document.getElementById('thumb-step-generating').classList.add('hidden');
-  document.getElementById('thumb-step-platform').classList.remove('hidden');
-
-  var pm=thumb.platformMeta[thumb.platform];
-  var isStory=thumb.platform==='story';
-  var isIg=thumb.platform==='ig';
-  var ratioClass=isStory?'story-ratio':isIg?'square-ratio':'';
-
-  var html='';
-  candidates.forEach(function(c,i){
-    html+='<div class="thumb-choice '+ratioClass+'" id="tc'+i+'" onclick="pilihThumbCandidate('+i+',this)">'
-      +'<div class="thumb-choice-check">✓</div>'
-      +'<img src="'+c.thumbnail+'" alt="Pilihan '+(i+1)+'" loading="lazy" onerror="this.style.height=\'100px\';this.style.background=\'#e0e0e0\'">'
-      +'<div class="thumb-choice-label">Pilihan '+(i+1)+'</div>'
-      +'</div>';
-  });
-  document.getElementById('thumb-choices-grid').innerHTML=html;
-  document.getElementById('thumb-step-pilih').classList.remove('hidden');
-  document.getElementById('btn-simpan-thumb').disabled=true;
-  document.getElementById('thumb-saved-info').classList.add('hidden');
+function processThumbFile(file){
+  if(file.size > 4*1024*1024){ alert('Saiz fail melebihi 4MB. Sila kompres imej terlebih dahulu.'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    thumbData.file = file;
+    thumbData.dataUrl = e.target.result;
+    thumbData.fileName = file.name;
+    thumbData.fileSize = (file.size/1024).toFixed(0)+' KB';
+    showThumbPreview();
+  };
+  reader.readAsDataURL(file);
 }
 
-function pilihThumbCandidate(i, el){
-  thumb.selectedCandidate=i;
-  document.querySelectorAll('.thumb-choice').forEach(function(c){ c.classList.remove('selected'); });
-  el.classList.add('selected');
-  document.getElementById('btn-simpan-thumb').disabled=false;
+function showThumbPreview(){
+  document.getElementById('thumb-upload-zone').classList.add('hidden');
+  document.getElementById('thumb-canva-tip').classList.add('hidden');
+  var area = document.getElementById('thumb-preview-area');
+  area.classList.remove('hidden');
+  document.getElementById('thumb-preview-img').src = thumbData.dataUrl;
+  document.getElementById('thumb-file-info').innerHTML =
+    '<strong>'+thumbData.fileName+'</strong><br>'+
+    'Saiz: '+thumbData.fileSize+'<br>'+
+    'Format: '+thumbData.file.type.split('/')[1].toUpperCase();
 }
 
-function simpanThumbTerpilih(){
-  if(thumb.selectedCandidate===null){ alert('Sila pilih satu reka bentuk dahulu.'); return; }
-  var c=thumb.candidates[thumb.selectedCandidate];
-  document.getElementById('btn-simpan-thumb').disabled=true;
-  document.getElementById('btn-simpan-thumb').textContent='Menyimpan...';
-  sendPrompt('SIMPAN_THUMB::'+c.candidateId+'::'+thumb.jobId);
-}
-
-function thumbSimpanBerjaya(designUrl){
-  document.getElementById('btn-simpan-thumb').textContent='✓ Tersimpan di Canva';
-  document.getElementById('thumb-canva-link').href=designUrl;
-  document.getElementById('thumb-saved-info').classList.remove('hidden');
-  state.thumbUrl=designUrl;
+function buangThumb(){
+  thumbData = { file:null, dataUrl:null, fileName:'', fileSize:'' };
+  document.getElementById('thumb-file-input').value='';
+  document.getElementById('thumb-preview-area').classList.add('hidden');
+  document.getElementById('thumb-upload-zone').classList.remove('hidden');
+  document.getElementById('thumb-canva-tip').classList.remove('hidden');
 }
 
 function resetThumb(){
-  thumb.platform=null; thumb.selectedCandidate=null; thumb.candidates=[];
-  document.querySelectorAll('.platform-pick-card').forEach(function(c){ c.classList.remove('selected'); });
-  document.getElementById('btn-jana-thumb').disabled=true;
-  document.getElementById('thumb-step-generating').classList.add('hidden');
-  document.getElementById('thumb-step-pilih').classList.add('hidden');
-  document.getElementById('thumb-saved-info').classList.add('hidden');
-  document.getElementById('thumb-gen-steps').innerHTML='';
-  document.getElementById('thumb-step-platform').classList.remove('hidden');
+  buangThumb();
 }
 
-/* ===== INTERCEPT sendPrompt for JANA_THUMB and SIMPAN_THUMB ===== */
-var _origSendPrompt = typeof sendPrompt === 'function' ? sendPrompt : null;
-function sendPrompt(msg){
-  if(msg.startsWith('JANA_THUMB::')){
-    var parts=msg.split('::');
-    var platform=parts[1], type=parts[2], tajuk=parts[3], topik=parts[4], jenisTag=parts[5], channel=parts[6];
-    callCanvaGenerate(type, tajuk, topik, jenisTag, channel);
-    return;
+/* Update lulusKandungan to show thumb preview in panel 4 */
+var _origLulusKandungan = lulusKandungan;
+lulusKandungan = function(){
+  _origLulusKandungan();
+  var hasThumbnail = thumbData.dataUrl !== null;
+  var prevWrap = document.getElementById('prev-thumb-wrap');
+  var prevNoThumb = document.getElementById('prev-no-thumb');
+  if(hasThumbnail){
+    prevWrap.classList.remove('hidden');
+    prevNoThumb.classList.add('hidden');
+    document.getElementById('prev-thumb-img').src = thumbData.dataUrl;
+    document.getElementById('prev-thumb-info').innerHTML =
+      '<strong>'+thumbData.fileName+'</strong><br>'+
+      'Saiz: '+thumbData.fileSize+'<br>'+
+      'Sedia untuk dihantar ke Facebook.';
+  } else {
+    prevWrap.classList.add('hidden');
+    prevNoThumb.classList.remove('hidden');
   }
-  if(msg.startsWith('SIMPAN_THUMB::')){
-    var p2=msg.split('::');
-    callCanvaSave(p2[1], p2[2]);
-    return;
-  }
-  if(_origSendPrompt) _origSendPrompt(msg);
-  else if(window.parent && window.parent.postMessage) window.parent.postMessage({type:'sendPrompt',text:msg},'*');
-}
+};
 
-function callCanvaGenerate(type, tajuk, topik, jenisTag, channel){
-  var payload={
-    type:'canva_generate',
-    design_type: type,
-    query:'Modern '+type.replace(/_/g,' ')+' thumbnail for Malaysian tech educator '+channel+'. Topic: '+topik+'. Headline: "'+tajuk+'". Malaysian flag colors: red #CC0001, navy #003478, yellow #FFD100, white. Badge: "'+jenisTag+'". Bold typography, tech visuals, MyTVET Skills Academy branding. Dark background with Malaysian patriotic accents. High contrast eye-catching design.'
-  };
-  if(window.parent) window.parent.postMessage({type:'claudeAction', payload:payload},'*');
-
+/* Update finalHantar to include image info */
+var _origFinalHantar = finalHantar;
+finalHantar = function(){
+  setStep(5); showPanel('panel-hantar');
   setTimeout(function(){
-    var fakeCandidates=[
-      {thumbnail:'https://design.canva.ai/placeholder1',candidateId:'demo-1',url:'https://www.canva.com'},
-      {thumbnail:'https://design.canva.ai/placeholder2',candidateId:'demo-2',url:'https://www.canva.com'},
-      {thumbnail:'https://design.canva.ai/placeholder3',candidateId:'demo-3',url:'https://www.canva.com'}
-    ];
-    document.getElementById('thumb-step-generating').classList.add('hidden');
-    document.getElementById('thumb-step-platform').classList.remove('hidden');
-    document.getElementById('thumb-gen-steps').innerHTML='<div style="color:var(--teal);font-size:13px;padding:8px 0">✅ Jana berjaya! Pilih reka bentuk kegemaran anda di bawah.</div>';
-    terimaCandidatesThumb(fakeCandidates,'demo-job');
-  },4500);
-}
+    document.getElementById('send-spinner').style.display='none';
+    document.getElementById('send-status-text').textContent='Selesai.';
+    document.getElementById('send-status-bar').className='status-bar success';
+    var masa = new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
+    var tarikh = new Date().toLocaleDateString('ms-MY',{year:'numeric',month:'long',day:'numeric'});
+    var hasImg = thumbData.dataUrl !== null;
+    document.getElementById('post-detail-text').innerHTML =
+      '<strong>Page:</strong> MyTVET Skills Academy<br>'+
+      '<strong>Tajuk:</strong> '+state.tajukTerpilih+'<br>'+
+      '<strong>Platform:</strong> '+platformLabel()+'<br>'+
+      '<strong>Gambar:</strong> '+(hasImg ? '✅ '+thumbData.fileName : '⚠️ Tiada gambar')+'<br>'+
+      '<strong>Masa terbit:</strong> '+tarikh+', '+masa+'<br>'+
+      '<strong>Status:</strong> Diterbitkan melalui Zapier → Facebook Pages';
+    document.getElementById('send-result').classList.remove('hidden');
+    var rec = {tajuk:state.tajukTerpilih, channel:state.channel, platform:platformLabel(), masa:tarikh+' '+masa, hasImg:hasImg};
+    state.history.unshift(rec);
+    if(state.history.length>50) state.history.pop();
+    localStorage.setItem('sop-history', JSON.stringify(state.history));
+  }, 2200);
+};
 
-function callCanvaSave(candidateId, jobId){
-  if(window.parent) window.parent.postMessage({type:'claudeAction',payload:{type:'canva_save',candidate_id:candidateId,job_id:jobId}},'*');
-  setTimeout(function(){
-    thumbSimpanBerjaya('https://www.canva.com/design/new');
-  },1500);
-}
-
-window.addEventListener('message',function(e){
-  if(!e.data) return;
-  if(e.data.type==='thumbCandidates') terimaCandidatesThumb(e.data.candidates, e.data.jobId);
-  if(e.data.type==='thumbSaved') thumbSimpanBerjaya(e.data.url);
-});
+/* Reset thumb on full app reset */
+var _origResetApp = resetApp;
+resetApp = function(){
+  buangThumb();
+  document.getElementById('prev-thumb-wrap') && document.getElementById('prev-thumb-wrap').classList.add('hidden');
+  document.getElementById('prev-no-thumb') && document.getElementById('prev-no-thumb').classList.add('hidden');
+  _origResetApp();
+};
 
 </script>
 </body>
