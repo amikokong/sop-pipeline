@@ -240,6 +240,56 @@
     margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px;
   }
 
+  /* Thumbnail panel */
+  .platform-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+  .ptab {
+    padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600;
+    border:1.5px solid var(--gray-100); background:var(--white);
+    cursor:pointer; transition:all .15s; color:var(--gray-500);
+  }
+  .ptab.active { background:var(--teal); color:white; border-color:var(--teal); }
+  .ptab:hover:not(.active) { border-color:var(--teal-mid); color:var(--teal); }
+  .thumb-wrap {
+    display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;
+  }
+  .thumb-canvas-wrap {
+    flex-shrink:0; position:relative;
+    border-radius:var(--radius-md); overflow:hidden;
+    border:1px solid var(--gray-100);
+    background:var(--gray-50);
+  }
+  .thumb-canvas-wrap canvas { display:block; }
+  .thumb-info { flex:1; min-width:180px; }
+  .thumb-spec {
+    font-size:12px; color:var(--gray-500); margin-bottom:10px;
+    padding:8px 12px; background:var(--gray-50);
+    border-radius:var(--radius-sm); border:1px solid var(--gray-100);
+    line-height:1.8;
+  }
+  .thumb-spec strong { color:var(--gray-800); }
+  .color-swatch-row { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+  .cswatch {
+    width:28px; height:28px; border-radius:6px; cursor:pointer;
+    border:2px solid transparent; transition:all .15s; flex-shrink:0;
+  }
+  .cswatch.active { border-color:var(--gray-800); transform:scale(1.1); }
+  .style-btn-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .style-btn {
+    padding:5px 12px; font-size:12px; font-weight:500;
+    border:1px solid var(--gray-100); border-radius:20px;
+    background:var(--white); color:var(--gray-500); cursor:pointer; transition:all .15s;
+  }
+  .style-btn.active { background:var(--teal-light); color:var(--teal); border-color:#9FE1CB; }
+  .style-btn:hover:not(.active) { border-color:var(--gray-300); }
+  .dl-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:8px 16px; background:var(--teal); color:white;
+    border:none; border-radius:var(--radius-sm); font-size:13px;
+    font-weight:500; cursor:pointer; transition:opacity .15s; font-family:inherit;
+    text-decoration:none;
+  }
+  .dl-btn:hover { opacity:.88; }
+
   /* Artikel preview */
   .artikel-preview {
     background: var(--white); border: 1px solid var(--gray-100);
@@ -535,6 +585,49 @@
 
       <div class="card">
         <div class="card-title">
+          <div class="card-title-icon icon-blue">🖼️</div>
+          Jana thumbnail
+        </div>
+        <div class="platform-tabs" id="thumb-ptabs">
+          <div class="ptab active" data-pt="fb" onclick="setPlatformThumb('fb',this)">Facebook (1200×630)</div>
+          <div class="ptab" data-pt="ig" onclick="setPlatformThumb('ig',this)">Instagram (1080×1080)</div>
+          <div class="ptab" data-pt="story" onclick="setPlatformThumb('story',this)">Story/TikTok (1080×1920)</div>
+          <div class="ptab" data-pt="yt" onclick="setPlatformThumb('yt',this)">YouTube (1280×720)</div>
+        </div>
+        <div class="thumb-wrap">
+          <div class="thumb-canvas-wrap" id="thumb-canvas-wrap">
+            <canvas id="thumb-canvas" width="600" height="315"></canvas>
+          </div>
+          <div class="thumb-info">
+            <div class="block-label" style="margin-bottom:8px">Tema warna</div>
+            <div class="color-swatch-row" id="color-swatches">
+              <div class="cswatch active" data-color="teal" style="background:#0F6E56" onclick="setThumbColor('teal',this)" title="Hijau"></div>
+              <div class="cswatch" data-color="dark" style="background:#1a1a2e" onclick="setThumbColor('dark',this)" title="Gelap"></div>
+              <div class="cswatch" data-color="red" style="background:#C0392B" onclick="setThumbColor('red',this)" title="Merah"></div>
+              <div class="cswatch" data-color="blue" style="background:#185FA5" onclick="setThumbColor('blue',this)" title="Biru"></div>
+              <div class="cswatch" data-color="orange" style="background:#E67E22" onclick="setThumbColor('orange',this)" title="Oren"></div>
+              <div class="cswatch" data-color="purple" style="background:#6C3483" onclick="setThumbColor('purple',this)" title="Ungu"></div>
+            </div>
+            <div class="block-label" style="margin-bottom:8px">Gaya</div>
+            <div class="style-btn-row" id="style-btns">
+              <div class="style-btn active" data-style="bold" onclick="setThumbStyle('bold',this)">Bold</div>
+              <div class="style-btn" data-style="minimal" onclick="setThumbStyle('minimal',this)">Minimal</div>
+              <div class="style-btn" data-style="breaking" onclick="setThumbStyle('breaking',this)">Breaking</div>
+              <div class="style-btn" data-style="edu" onclick="setThumbStyle('edu',this)">Edu</div>
+            </div>
+            <div class="thumb-spec" id="thumb-spec">
+              <strong>Facebook Post</strong><br>
+              Saiz: 1200 × 630 px<br>
+              Nisbah: 1.91:1<br>
+              Format: PNG
+            </div>
+            <a class="dl-btn" id="thumb-dl-btn" onclick="downloadThumb()">⬇ Muat turun thumbnail</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
           <div class="card-title-icon icon-amber">✋</div>
           Keputusan anda
         </div>
@@ -668,7 +761,7 @@
 
 </main>
 
-<footer>SOP Pipeline v1.1 · MyTVET Skills Academy · Dibina dengan Claude AI + Zapier</footer>
+<footer>SOP Pipeline v1.2 · MyTVET Skills Academy · Dibina dengan Claude AI + Zapier</footer>
 
 <script>
 var state = {
@@ -917,6 +1010,229 @@ function renderHistory(){
     return '<div class="history-item"><div class="history-dot"></div><div class="history-text"><div class="history-title">'+r.tajuk+'</div><div class="history-sub">'+r.channel+' · '+r.platform+' · '+r.masa+'</div></div></div>';
   }).join('');
 }
+
+/* ===== THUMBNAIL ENGINE ===== */
+var thumb = {
+  platform:'fb', color:'teal', style:'bold',
+  platforms:{
+    fb:{w:1200,h:630,cw:600,ch:315,label:'Facebook Post',spec:'1200 × 630 px · Nisbah 1.91:1'},
+    ig:{w:1080,h:1080,cw:400,ch:400,label:'Instagram Post',spec:'1080 × 1080 px · Nisbah 1:1'},
+    story:{w:1080,h:1920,cw:270,ch:480,label:'Story / TikTok',spec:'1080 × 1920 px · Nisbah 9:16'},
+    yt:{w:1280,h:720,cw:560,ch:315,label:'YouTube Thumbnail',spec:'1280 × 720 px · Nisbah 16:9'}
+  },
+  palettes:{
+    teal:  {bg:'#0a2e25',acc:'#1D9E75',acc2:'#9FE1CB',txt:'#ffffff',badge:'#1D9E75',badgeTxt:'#ffffff'},
+    dark:  {bg:'#0d0d1a',acc:'#7B68EE',acc2:'#B8ADFF',txt:'#ffffff',badge:'#7B68EE',badgeTxt:'#ffffff'},
+    red:   {bg:'#1a0505',acc:'#C0392B',acc2:'#F1948A',txt:'#ffffff',badge:'#C0392B',badgeTxt:'#ffffff'},
+    blue:  {bg:'#04142b',acc:'#185FA5',acc2:'#85B7EB',txt:'#ffffff',badge:'#185FA5',badgeTxt:'#ffffff'},
+    orange:{bg:'#1c0e00',acc:'#E67E22',acc2:'#FAC775',txt:'#ffffff',badge:'#E67E22',badgeTxt:'#ffffff'},
+    purple:{bg:'#16082b',acc:'#6C3483',acc2:'#C39BD3',txt:'#ffffff',badge:'#6C3483',badgeTxt:'#ffffff'}
+  }
+};
+
+function setPlatformThumb(p, el){
+  thumb.platform=p;
+  document.querySelectorAll('.ptab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  var pd=thumb.platforms[p];
+  document.getElementById('thumb-spec').innerHTML='<strong>'+pd.label+'</strong><br>Saiz: '+pd.spec+'<br>Format: PNG';
+  resizeCanvas();
+  drawThumb();
+}
+
+function setThumbColor(c, el){
+  thumb.color=c;
+  document.querySelectorAll('.cswatch').forEach(function(s){ s.classList.remove('active'); });
+  el.classList.add('active');
+  drawThumb();
+}
+
+function setThumbStyle(s, el){
+  thumb.style=s;
+  document.querySelectorAll('.style-btn').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  drawThumb();
+}
+
+function resizeCanvas(){
+  var pd=thumb.platforms[thumb.platform];
+  var cv=document.getElementById('thumb-canvas');
+  cv.width=pd.cw; cv.height=pd.ch;
+  document.getElementById('thumb-canvas-wrap').style.width=pd.cw+'px';
+}
+
+function wrapText(ctx, text, x, y, maxW, lineH){
+  var words=text.split(' '), line='', lines=[];
+  for(var i=0;i<words.length;i++){
+    var test=line+(line?' ':'')+words[i];
+    if(ctx.measureText(test).width>maxW && line){ lines.push(line); line=words[i]; }
+    else line=test;
+  }
+  lines.push(line);
+  for(var j=0;j<lines.length;j++) ctx.fillText(lines[j], x, y+j*lineH);
+  return lines.length;
+}
+
+function drawThumb(){
+  var cv=document.getElementById('thumb-canvas');
+  var ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+  var pal=thumb.palettes[thumb.color];
+  var s=thumb.style;
+  var tajuk=state.tajukTerpilih||'Tajuk kandungan anda akan muncul di sini';
+  var topik=(state.tajuk||'Teknologi AI').split('(')[0].split('!')[0].trim();
+  var jenisMap={artikel:'ANALISIS',pendek:'ARTIKEL',iklan:'PROMOSI',santai:'SANTAI',edu:'TUTORIAL',berita:'BERITA'};
+  var jenisTag=jenisMap[state.jenis]||'KANDUNGAN';
+  var scale=W/600;
+
+  /* BG */
+  ctx.fillStyle=pal.bg;
+  ctx.fillRect(0,0,W,H);
+
+  if(s==='bold'){
+    /* Accent bar kiri */
+    ctx.fillStyle=pal.acc;
+    ctx.fillRect(0,0,Math.round(6*scale),H);
+    /* Top diagonal slash */
+    ctx.fillStyle=pal.acc+'22';
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(W*0.55,0); ctx.lineTo(W*0.38,H); ctx.lineTo(0,H); ctx.closePath(); ctx.fill();
+    /* Badge jenis */
+    var bw=Math.round(110*scale), bh=Math.round(28*scale), bx=Math.round(24*scale), by=Math.round(22*scale);
+    ctx.fillStyle=pal.badge; roundRect(ctx,bx,by,bw,bh,Math.round(6*scale)); ctx.fill();
+    ctx.fillStyle=pal.badgeTxt; ctx.font='bold '+Math.round(11*scale)+'px Arial,sans-serif';
+    ctx.textAlign='center'; ctx.fillText(jenisTag, bx+bw/2, by+bh/2+Math.round(4*scale));
+    /* Channel */
+    ctx.fillStyle=pal.acc2; ctx.font=Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='left'; ctx.fillText(state.channel||'MyTVET Skills Academy', Math.round(24*scale), by+bh+Math.round(18*scale));
+    /* Tajuk */
+    ctx.fillStyle='#ffffff'; ctx.font='bold '+Math.round(22*scale)+'px Arial,sans-serif';
+    ctx.textAlign='left';
+    var tLines=getWrappedLines(ctx,tajuk,W-Math.round(60*scale));
+    var tY=Math.round(H*0.34); var tLH=Math.round(30*scale);
+    for(var i=0;i<Math.min(tLines.length,3);i++) ctx.fillText(tLines[i],Math.round(24*scale),tY+i*tLH);
+    /* Bottom bar */
+    ctx.fillStyle=pal.acc; ctx.fillRect(0,H-Math.round(5*scale),W,Math.round(5*scale));
+    /* Brand */
+    ctx.fillStyle=pal.acc2+'99'; ctx.font=Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='right'; ctx.fillText('mytvetskillsacademy.github.io',W-Math.round(16*scale),H-Math.round(12*scale));
+
+  } else if(s==='minimal'){
+    /* Grid lines subtle */
+    ctx.strokeStyle=pal.acc+'18'; ctx.lineWidth=1;
+    for(var gi=1;gi<4;gi++){ ctx.beginPath(); ctx.moveTo(W*gi/4,0); ctx.lineTo(W*gi/4,H); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(0,H*0.5); ctx.lineTo(W,H*0.5); ctx.stroke();
+    /* Top accent line */
+    ctx.fillStyle=pal.acc; ctx.fillRect(Math.round(24*scale),Math.round(22*scale),Math.round(40*scale),Math.round(3*scale));
+    /* Jenis label */
+    ctx.fillStyle=pal.acc2; ctx.font=Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='left'; ctx.letterSpacing='2px';
+    ctx.fillText(jenisTag+' · '+( state.channel||'MyTVET Skills Academy').toUpperCase(), Math.round(24*scale), Math.round(46*scale));
+    ctx.letterSpacing='0px';
+    /* Tajuk besar */
+    ctx.fillStyle='#ffffff'; ctx.font='bold '+Math.round(24*scale)+'px Arial,sans-serif';
+    var tl2=getWrappedLines(ctx,tajuk,W-Math.round(60*scale));
+    var ty2=Math.round(H*0.38);
+    for(var j=0;j<Math.min(tl2.length,3);j++) ctx.fillText(tl2[j],Math.round(24*scale),ty2+j*Math.round(32*scale));
+    /* Bottom brand */
+    ctx.fillStyle=pal.acc+'cc'; ctx.fillRect(Math.round(24*scale),H-Math.round(28*scale),Math.round(2*scale),Math.round(14*scale));
+    ctx.fillStyle=pal.acc2+'aa'; ctx.font=Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='left'; ctx.fillText('MyTVET Skills Academy',Math.round(32*scale),H-Math.round(18*scale));
+
+  } else if(s==='breaking'){
+    /* Red top bar */
+    ctx.fillStyle=pal.acc; ctx.fillRect(0,0,W,Math.round(44*scale));
+    ctx.fillStyle='#ffffff'; ctx.font='bold '+Math.round(13*scale)+'px Arial,sans-serif';
+    ctx.textAlign='center'; ctx.fillText('🔴  '+jenisTag+'  ·  '+( state.channel||'MyTVET Skills Academy').toUpperCase(), W/2, Math.round(27*scale));
+    /* Garis putih */
+    ctx.fillStyle='#ffffff22'; ctx.fillRect(0,Math.round(44*scale),W,Math.round(1*scale));
+    /* Tajuk */
+    ctx.fillStyle='#ffffff'; ctx.font='bold '+Math.round(21*scale)+'px Arial,sans-serif';
+    ctx.textAlign='left';
+    var tl3=getWrappedLines(ctx,tajuk,W-Math.round(52*scale));
+    var ty3=Math.round(H*0.36);
+    for(var k=0;k<Math.min(tl3.length,3);k++) ctx.fillText(tl3[k],Math.round(24*scale),ty3+k*Math.round(29*scale));
+    /* Ticker bottom */
+    ctx.fillStyle=pal.acc+'dd'; ctx.fillRect(0,H-Math.round(32*scale),W,Math.round(32*scale));
+    ctx.fillStyle='#ffffff'; ctx.font=Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='left'; ctx.fillText('mytvetskillsacademy.github.io  ·  Ahmad Faezal  ·  '+new Date().toLocaleDateString('ms-MY'),Math.round(16*scale),H-Math.round(12*scale));
+
+  } else if(s==='edu'){
+    /* Circles deco */
+    ctx.fillStyle=pal.acc+'18';
+    ctx.beginPath(); ctx.arc(W-Math.round(60*scale),Math.round(60*scale),Math.round(80*scale),0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=pal.acc+'10';
+    ctx.beginPath(); ctx.arc(Math.round(30*scale),H-Math.round(40*scale),Math.round(60*scale),0,Math.PI*2); ctx.fill();
+    /* Icon area top-right */
+    ctx.fillStyle=pal.acc+'33';
+    ctx.beginPath(); ctx.arc(W-Math.round(55*scale),Math.round(55*scale),Math.round(38*scale),0,Math.PI*2); ctx.fill();
+    ctx.font=Math.round(28*scale)+'px Arial'; ctx.textAlign='center';
+    var emojiMap={artikel:'📰',pendek:'⚡',iklan:'📣',santai:'💬',edu:'🎓',berita:'📡'};
+    ctx.fillText(emojiMap[state.jenis]||'🎓',W-Math.round(55*scale),Math.round(55*scale)+Math.round(10*scale));
+    /* Badge */
+    ctx.fillStyle=pal.badge; roundRect(ctx,Math.round(24*scale),Math.round(22*scale),Math.round(100*scale),Math.round(24*scale),Math.round(12*scale)); ctx.fill();
+    ctx.fillStyle=pal.badgeTxt; ctx.font='bold '+Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='center'; ctx.fillText(jenisTag,Math.round(74*scale),Math.round(38*scale));
+    /* Channel */
+    ctx.fillStyle=pal.acc2; ctx.font=Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='left'; ctx.fillText(state.channel||'MyTVET Skills Academy',Math.round(24*scale),Math.round(64*scale));
+    /* Tajuk */
+    ctx.fillStyle='#ffffff'; ctx.font='bold '+Math.round(20*scale)+'px Arial,sans-serif';
+    var tl4=getWrappedLines(ctx,tajuk,W-Math.round(80*scale));
+    var ty4=Math.round(H*0.40);
+    for(var m=0;m<Math.min(tl4.length,4);m++) ctx.fillText(tl4[m],Math.round(24*scale),ty4+m*Math.round(27*scale));
+    /* Bottom */
+    ctx.fillStyle=pal.acc; ctx.fillRect(0,H-Math.round(4*scale),W,Math.round(4*scale));
+    ctx.fillStyle=pal.acc2+'99'; ctx.font=Math.round(10*scale)+'px Arial,sans-serif';
+    ctx.textAlign='right'; ctx.fillText('MyTVET Skills Academy',W-Math.round(16*scale),H-Math.round(10*scale));
+  }
+}
+
+function getWrappedLines(ctx, text, maxW){
+  var words=text.split(' '), line='', lines=[];
+  for(var i=0;i<words.length;i++){
+    var test=line+(line?' ':'')+words[i];
+    if(ctx.measureText(test).width>maxW && line){ lines.push(line); line=words[i]; }
+    else line=test;
+  }
+  if(line) lines.push(line);
+  return lines;
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+
+function downloadThumb(){
+  var pd=thumb.platforms[thumb.platform];
+  /* Draw to full-res offscreen canvas */
+  var oc=document.createElement('canvas');
+  oc.width=pd.w; oc.height=pd.h;
+  var prevCv=document.getElementById('thumb-canvas');
+  var prevW=prevCv.width, prevH=prevCv.height;
+  prevCv.width=pd.w; prevCv.height=pd.h;
+  drawThumb();
+  var url=prevCv.toDataURL('image/png');
+  prevCv.width=prevW; prevCv.height=prevH;
+  drawThumb();
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='thumbnail-'+(state.jenis||'kandungan')+'-'+thumb.platform+'.png';
+  a.click();
+}
+
+/* Draw initial thumbnail whenever panel-semak becomes visible */
+var _origIsiSemak=isiSemak;
+isiSemak=function(){
+  _origIsiSemak();
+  setTimeout(function(){
+    resizeCanvas();
+    drawThumb();
+  },100);
+};
 </script>
 </body>
 </html>
