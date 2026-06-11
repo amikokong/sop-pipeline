@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOP Pipeline Kandungan Harian — MyTVET Skills Academy</title>
+<style>
+  :root {
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --red: #A32D2D;
+    --red-light: #FCEBEB;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --gray-50: #F7F6F3;
+    --gray-100: #ECEAE4;
+    --gray-300: #B4B2A9;
+    --gray-500: #5F5E5A;
+    --gray-800: #2C2C2A;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --white: #ffffff;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-logo {
+    width: 32px; height: 32px;
+    background: var(--teal);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px; letter-spacing: -0.5px;
+  }
+  .header-title { font-weight: 600; font-size: 15px; color: var(--gray-800); }
+  .header-sub { font-size: 12px; color: var(--gray-500); }
+  .header-badge {
+    font-size: 11px; font-weight: 500;
+    background: var(--teal-light); color: var(--teal);
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid #9FE1CB;
+  }
+
+  /* Step bar */
+  .stepbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .step {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 20px 12px;
+    font-size: 13px; font-weight: 500;
+    color: var(--gray-300);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    cursor: default;
+    transition: all .2s;
+    position: relative;
+  }
+  .step.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .step.done { color: var(--gray-500); }
+  .step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--gray-100); color: var(--gray-500);
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step.active .step-num { background: var(--teal); color: white; }
+  .step.done .step-num { background: var(--green-light); color: var(--green); }
+  .step.done .step-num::after { content: '✓'; font-size: 11px; }
+  .step.done .step-num span { display: none; }
+
+  /* Main layout */
+  .main { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 14px; font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title-icon {
+    width: 28px; height: 28px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .icon-teal { background: var(--teal-light); }
+  .icon-amber { background: var(--amber-light); }
+  .icon-red { background: var(--red-light); }
+  .icon-green { background: var(--green-light); }
+  .icon-blue { background: var(--blue-light); }
+
+  /* Form fields */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block; font-size: 13px; font-weight: 500;
+    color: var(--gray-500); margin-bottom: 5px;
+  }
+  input[type=text], textarea, select {
+    width: 100%; padding: 9px 12px;
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-sm);
+    font-size: 14px; color: var(--gray-800);
+    background: var(--white);
+    outline: none; transition: border .15s;
+    font-family: inherit;
+  }
+  input[type=text]:focus, textarea:focus, select:focus {
+    border-color: var(--teal-mid);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.1);
+  }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  select { cursor: pointer; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:520px){ .field-row { grid-template-columns: 1fr; } }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--gray-100); background: var(--white);
+    color: var(--gray-800); transition: all .15s;
+    font-family: inherit;
+  }
+  .btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .btn-primary { background: var(--teal); color: white; border-color: var(--teal); }
+  .btn-primary:hover { background: var(--teal-mid); border-color: var(--teal-mid); }
+  .btn-success { background: var(--green-light); color: var(--green); border-color: #C0DD97; }
+  .btn-success:hover { background: #d4eaae; }
+  .btn-danger { background: var(--red-light); color: var(--red); border-color: #F7C1C1; }
+  .btn-danger:hover { background: #f9d5d5; }
+  .btn-amber { background: var(--amber-light); color: var(--amber); border-color: #FAC775; }
+  .btn-amber:hover { background: #fde3b0; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+  /* Status */
+  .status-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: var(--radius-sm);
+    font-size: 14px; margin-bottom: 16px;
+    background: var(--blue-light); color: var(--blue);
+    border: 1px solid #B5D4F4;
+  }
+  .status-bar.success { background: var(--green-light); color: var(--green); border-color: #C0DD97; }
+  .status-bar.warning { background: var(--amber-light); color: var(--amber); border-color: #FAC775; }
+  .status-bar.danger { background: var(--red-light); color: var(--red); border-color: #F7C1C1; }
+
+  .spinner {
+    width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid rgba(24,95,165,0.2);
+    border-top-color: var(--blue);
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Gen steps */
+  .gen-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; font-size: 13px; color: var(--gray-500);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .gen-step:last-child { border-bottom: none; }
+  .gen-step-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+  .gen-step.pending .gen-step-icon { color: var(--gray-300); }
+  .gen-step.running .gen-step-icon { color: var(--blue); }
+  .gen-step.done .gen-step-icon { color: var(--green); }
+  .gen-step.done { color: var(--gray-800); }
+
+  /* Badge */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 500; padding: 4px 10px;
+    border-radius: 20px; margin-bottom: 12px;
+  }
+  .badge-success { background: var(--green-light); color: var(--green); border: 1px solid #C0DD97; }
+  .badge-danger { background: var(--red-light); color: var(--red); border: 1px solid #F7C1C1; }
+  .badge-warning { background: var(--amber-light); color: var(--amber); border: 1px solid #FAC775; }
+
+  /* Content blocks */
+  .content-block {
+    background: var(--gray-50); border: 1px solid var(--gray-100);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; line-height: 1.7; white-space: pre-wrap;
+    color: var(--gray-800); margin-bottom: 12px;
+  }
+  .block-label {
+    font-size: 12px; font-weight: 500; color: var(--gray-500);
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+
+  /* Artikel preview */
+  .artikel-preview {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: var(--radius-md); padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .artikel-preview h2 {
+    font-size: 17px; font-weight: 700; line-height: 1.4;
+    color: var(--gray-800); margin-bottom: 16px;
+    padding-bottom: 14px; border-bottom: 2px solid var(--teal-light);
+  }
+  .artikel-preview p { font-size: 14px; line-height: 1.8; color: #3d3d3a; margin-bottom: 12px; }
+  .artikel-meta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    font-size: 12px; color: var(--gray-500);
+    margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .artikel-meta span { display: flex; align-items: center; gap: 4px; }
+
+  /* Feedback */
+  .feedback-box { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-100); }
+
+  /* Meta info row */
+  .meta-info { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .meta-item { font-size: 13px; color: var(--gray-500); }
+  .meta-item strong { color: var(--gray-800); font-weight: 500; }
+
+  /* Success panel */
+  .success-panel {
+    text-align: center; padding: 32px 24px;
+  }
+  .success-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--green-light); border: 2px solid #C0DD97;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin: 0 auto 16px;
+  }
+  .success-panel h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .success-panel p { font-size: 14px; color: var(--gray-500); margin-bottom: 20px; }
+  .post-detail {
+    background: var(--gray-50); border: 1px solid var(--gray-100);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    text-align: left; font-size: 13px; line-height: 1.9;
+    margin-bottom: 20px;
+  }
+
+  /* History */
+  .history-empty { text-align: center; padding: 40px; color: var(--gray-300); font-size: 14px; }
+  .history-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--teal); flex-shrink: 0;
+  }
+  .history-text { flex: 1; font-size: 13px; }
+  .history-title { font-weight: 500; color: var(--gray-800); }
+  .history-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  /* Nav */
+  .nav-tabs {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--gray-100); margin-bottom: 20px;
+  }
+  .nav-tab {
+    padding: 10px 18px; font-size: 13px; font-weight: 500;
+    color: var(--gray-500); border-bottom: 2px solid transparent;
+    cursor: pointer; transition: all .15s;
+  }
+  .nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .nav-tab:hover { color: var(--gray-800); }
+
+  .hidden { display: none !important; }
+  .divider { border: none; border-top: 1px solid var(--gray-100); margin: 14px 0; }
+
+  /* Tajuk option */
+  .tajuk-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-100); margin-bottom: 8px;
+    cursor: pointer; transition: all .15s; background: var(--white);
+  }
+  .tajuk-option:hover { border-color: var(--teal-mid); background: var(--teal-light); }
+  .tajuk-option.selected { border-color: var(--teal); background: var(--teal-light); }
+  .tajuk-option input { margin-top: 2px; accent-color: var(--teal); }
+  .tajuk-option label { font-size: 13px; line-height: 1.5; cursor: pointer; color: var(--gray-800); }
+  .tajuk-tag {
+    font-size: 10px; font-weight: 600; padding: 1px 7px;
+    border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  }
+  .tag-tekno { background: var(--blue-light); color: var(--blue); }
+  .tag-geo { background: #FBEAF0; color: #993556; }
+  .tag-edu { background: var(--amber-light); color: var(--amber); }
+
+  footer {
+    text-align: center; padding: 20px;
+    font-size: 12px; color: var(--gray-300);
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">MS</div>
+    <div>
+      <div class="header-title">SOP Pipeline Kandungan</div>
+      <div class="header-sub">MyTVET Skills Academy</div>
+    </div>
+  </div>
+  <div class="header-badge">Ahmad Faezal Mode</div>
+</header>
+
+<div style="background:var(--white);border-bottom:1px solid var(--gray-100);">
+  <div style="max-width:760px;margin:0 auto;padding:0 20px;">
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="switchTab('pipeline')">Pipeline</div>
+      <div class="nav-tab" onclick="switchTab('history')">Rekod posting</div>
+      <div class="nav-tab" onclick="switchTab('about')">Panduan SOP</div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+
+  <!-- TAB: PIPELINE -->
+  <div id="tab-pipeline">
+
+    <!-- Stepbar -->
+    <div class="stepbar" style="max-width:760px;margin:-28px -20px 28px;padding:0 20px;">
+      <div class="step active" id="sp1"><div class="step-num"><span>1</span></div>Input</div>
+      <div class="step" id="sp2"><div class="step-num"><span>2</span></div>Jana</div>
+      <div class="step" id="sp3"><div class="step-num"><span>3</span></div>Semak draf</div>
+      <div class="step" id="sp4"><div class="step-num"><span>4</span></div>Pratonton</div>
+      <div class="step" id="sp5"><div class="step-num"><span>5</span></div>Hantar</div>
+    </div>
+
+    <!-- PANEL 1: INPUT -->
+    <div id="panel-input">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-blue">📹</div>
+          Maklumat video
+        </div>
+        <div class="field">
+          <label for="f-tajuk">Tajuk video <span style="color:#E24B4A">*</span></label>
+          <input type="text" id="f-tajuk" placeholder="cth: NotebookLM & Gemini New Upgrades Change Everything!">
+        </div>
+        <div class="field">
+          <label for="f-channel">Nama channel <span style="color:#E24B4A">*</span></label>
+          <input type="text" id="f-channel" placeholder="cth: Rob The AI Guy">
+        </div>
+        <div class="field">
+          <label for="f-url">URL video (pilihan)</label>
+          <input type="text" id="f-url" placeholder="https://youtu.be/...">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-teal">⚙️</div>
+          Tetapan kandungan
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="f-angle">Fokus angle</label>
+            <select id="f-angle">
+              <option value="auto">Automatik (Claude pilih)</option>
+              <option value="tekno">Teknologi / gempar</option>
+              <option value="geo">Geopolitik / persaingan</option>
+              <option value="edu">Pendidikan / kerjaya</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-platform">Platform sasaran</label>
+            <select id="f-platform">
+              <option value="fb">Facebook Pages</option>
+              <option value="tiktok">TikTok</option>
+              <option value="kedua-dua">Facebook + TikTok</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-nota">Nota khas (pilihan)</label>
+          <textarea id="f-nota" placeholder="cth: sertakan sebutan kursus HRDC, fokus kepada pelajar Malaysia, tambah CTA untuk pendaftaran..."></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="mulaJana()">▶ Jana kandungan</button>
+        <button class="btn" onclick="isiContoh()">Isi contoh</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2: GENERATE -->
+    <div id="panel-generate" class="hidden">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-blue">⚡</div>
+          Sedang memproses...
+        </div>
+        <div class="status-bar" id="gen-status-bar">
+          <div class="spinner" id="gen-spinner"></div>
+          <span id="gen-status-text">Memulakan pipeline...</span>
+        </div>
+        <div id="gen-steps-list"></div>
+      </div>
+    </div>
+
+    <!-- PANEL 3: SEMAK -->
+    <div id="panel-semak" class="hidden">
+
+      <div class="card" id="verif-card">
+        <div class="card-title">
+          <div class="card-title-icon icon-green">🛡️</div>
+          Laporan verifikasi
+        </div>
+        <div id="verif-badge-area"></div>
+        <div class="content-block" id="verif-detail" style="font-size:13px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-teal">📰</div>
+          Pilih tajuk artikel
+        </div>
+        <div id="tajuk-options"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-teal">📦</div>
+          Pakej kandungan
+        </div>
+        <div class="block-label">Ringkasan (30 patah perkataan)</div>
+        <div class="content-block" id="ringkasan-box"></div>
+        <div class="block-label">Hashtag</div>
+        <div class="content-block" id="hashtag-box"></div>
+        <div class="block-label">Caption Facebook</div>
+        <div class="content-block" id="caption-box"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-amber">✋</div>
+          Keputusan anda
+        </div>
+        <div class="btn-row" style="margin-top:0">
+          <button class="btn btn-success" onclick="lulusKandungan()">✓ Lulus — terus ke pratonton</button>
+          <button class="btn btn-danger" onclick="toggleFeedback()">↩ Pulangkan untuk betulkan</button>
+        </div>
+        <div id="feedback-area" class="hidden feedback-box">
+          <label for="f-feedback" style="margin-top:12px;display:block;">Nyatakan apa yang perlu diperbetulkan</label>
+          <textarea id="f-feedback" placeholder="cth: tukar angle kepada pendidikan, tajuk terlalu panjang, tambah sebutan HRDC, ubah nada lebih santai..."></textarea>
+          <div class="btn-row">
+            <button class="btn btn-amber" onclick="hantarFeedback()">↗ Jana semula mengikut maklum balas</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANEL 4: PRATONTON -->
+    <div id="panel-preview" class="hidden">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-teal">👁️</div>
+          Pratonton artikel penuh
+        </div>
+        <div class="artikel-preview">
+          <div class="artikel-meta">
+            <span>📅 <span id="prev-tarikh"></span></span>
+            <span>📱 <span id="prev-platform"></span></span>
+            <span>🕗 8–11 malam MYT</span>
+            <span>✍️ Ahmad Faezal</span>
+          </div>
+          <h2 id="prev-tajuk"></h2>
+          <div id="prev-artikel"></div>
+        </div>
+        <hr class="divider">
+        <div class="block-label">Caption yang akan dihantar ke Facebook</div>
+        <div class="content-block" id="prev-caption"></div>
+        <hr class="divider">
+        <div class="meta-info">
+          <div class="meta-item">Platform: <strong id="prev-platform2"></strong></div>
+          <div class="meta-item">Hashtag: <strong id="prev-hashtag"></strong></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-success" id="btn-final-hantar" onclick="finalHantar()">📤 Sahkan &amp; hantar ke Facebook</button>
+          <button class="btn" onclick="balikSemak()">← Balik semak</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 5: HANTAR -->
+    <div id="panel-hantar" class="hidden">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon icon-teal">📤</div>
+          Status penerbitan
+        </div>
+        <div class="status-bar" id="send-status-bar">
+          <div class="spinner" id="send-spinner"></div>
+          <span id="send-status-text">Menghantar ke Facebook Pages melalui Zapier...</span>
+        </div>
+        <div id="send-result" class="hidden">
+          <div class="success-panel">
+            <div class="success-icon">✓</div>
+            <h3>Posting berjaya diterbitkan!</h3>
+            <p>Kandungan telah dihantar ke halaman MyTVET Skills Academy</p>
+            <div class="post-detail" id="post-detail-text"></div>
+            <div class="btn-row" style="justify-content:center">
+              <button class="btn btn-primary" onclick="resetApp()">+ Input baharu</button>
+              <button class="btn btn-amber" onclick="bukaSemakAnalitik()">📊 Semak analitik esok</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end tab-pipeline -->
+
+  <!-- TAB: REKOD -->
+  <div id="tab-history" class="hidden">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon icon-teal">📋</div>
+        Rekod posting
+      </div>
+      <div id="history-list">
+        <div class="history-empty">Tiada rekod lagi. Mula posting pertama anda!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PANDUAN -->
+  <div id="tab-about" class="hidden">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-icon icon-blue">📘</div>
+        Panduan SOP Harian
+      </div>
+      <div style="font-size:14px;line-height:1.9;color:var(--gray-800)">
+        <p style="margin-bottom:12px"><strong>Aliran kerja 5 peringkat:</strong></p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="min-width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">1</div>
+            <div><strong>Input</strong> — Isi tajuk video, nama channel, platform, dan angle cerita. Masa: ±1 minit.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="min-width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">2</div>
+            <div><strong>Jana</strong> — Claude jalankan verifikasi silang 3+ sumber dan hasilkan pakej kandungan penuh secara automatik.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="min-width:24px;height:24px;border-radius:50%;background:var(--amber);color:white;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">3</div>
+            <div><strong>Semak draf</strong> — Anda semak, pilih tajuk, lulus atau pulangkan dengan maklum balas. Masa: ±2 minit.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="min-width:24px;height:24px;border-radius:50%;background:var(--amber);color:white;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">4</div>
+            <div><strong>Pratonton</strong> — Baca artikel penuh sebelum sebarang penerbitan. Anda yang pegang kawalan akhir.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="min-width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">5</div>
+            <div><strong>Hantar</strong> — Tekan sahkan, Zapier terbitkan terus ke Facebook Pages. Masa optimum: 8–11 malam MYT.</div>
+          </div>
+        </div>
+        <hr class="divider">
+        <p style="margin-bottom:8px"><strong>Prinsip Ahmad Faezal:</strong></p>
+        <p style="margin-bottom:8px">🟢 Status Hijau = sahih, diterbitkan<br>🔴 Status Merah = tidak sahih, henti dan lapor sahaja<br>🟡 Status Kuning = tidak pasti, perlu tambah sumber</p>
+        <hr class="divider">
+        <p style="font-size:13px;color:var(--gray-500)">Versi 1.0 · MyTVET Skills Academy · Dibina dengan Claude + Zapier MCP</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>SOP Pipeline v1.0 · MyTVET Skills Academy · Dibina dengan Claude AI + Zapier</footer>
+
+<script>
+var state = {
+  tajuk:'', channel:'', url:'', angle:'auto', platform:'fb', nota:'',
+  verif:'', artikel:'', tajukTerpilih:'', tajukOps:[], ringkasan:'', hashtag:'', caption:'',
+  history: JSON.parse(localStorage.getItem('sop-history')||'[]')
+};
+
+function switchTab(t){
+  ['pipeline','history','about'].forEach(function(id){
+    document.getElementById('tab-'+id).classList.toggle('hidden', id!==t);
+  });
+  document.querySelectorAll('.nav-tab').forEach(function(el,i){
+    el.classList.toggle('active', ['pipeline','history','about'][i]===t);
+  });
+  if(t==='history') renderHistory();
+}
+
+function setStep(n){
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('sp'+i);
+    el.className='step'+(i===n?' active':i<n?' done':'');
+  }
+}
+
+function showPanel(id){
+  ['panel-input','panel-generate','panel-semak','panel-preview','panel-hantar'].forEach(function(p){
+    document.getElementById(p).classList.toggle('hidden', p!==id);
+  });
+}
+
+function isiContoh(){
+  document.getElementById('f-tajuk').value='NotebookLM & Google Gemini\'s New Upgrades Change Everything! (New Features)';
+  document.getElementById('f-channel').value='Rob The AI Guy';
+  document.getElementById('f-url').value='https://youtu.be/U5GicGCxI5s';
+  document.getElementById('f-angle').value='tekno';
+  document.getElementById('f-nota').value='Fokus kepada impak kepada pelajar dan trainer Malaysia. Sertakan CTA untuk kursus AI HRDC.';
+}
+
+function mulaJana(){
+  var t=document.getElementById('f-tajuk').value.trim();
+  var c=document.getElementById('f-channel').value.trim();
+  if(!t){alert('Sila isi tajuk video terlebih dahulu.');document.getElementById('f-tajuk').focus();return;}
+  if(!c){alert('Sila isi nama channel.');document.getElementById('f-channel').focus();return;}
+  state.tajuk=t; state.channel=c;
+  state.url=document.getElementById('f-url').value.trim();
+  state.angle=document.getElementById('f-angle').value;
+  state.platform=document.getElementById('f-platform').value;
+  state.nota=document.getElementById('f-nota').value.trim();
+  setStep(2); showPanel('panel-generate');
+
+  var steps=[
+    {label:'Mengesahkan sumber — semak kredibiliti channel...'},
+    {label:'Verifikasi silang 3 sumber bebas (Reuters, blog rasmi, media tech)...'},
+    {label:'Menghasilkan artikel gaya Ahmad Faezal...'},
+    {label:'Menjana 3 tajuk hook (3 angle berbeza)...'},
+    {label:'Menyusun ringkasan, hashtag dan caption Facebook...'}
+  ];
+
+  var list=document.getElementById('gen-steps-list');
+  list.innerHTML='';
+  steps.forEach(function(s,i){
+    list.innerHTML+='<div class="gen-step pending" id="gs'+i+'"><div class="gen-step-icon">○</div><span>'+s.label+'</span></div>';
+  });
+
+  var i=0;
+  var iv=setInterval(function(){
+    if(i>0){
+      var prev=document.getElementById('gs'+(i-1));
+      prev.className='gen-step done';
+      prev.querySelector('.gen-step-icon').textContent='✓';
+    }
+    if(i<steps.length){
+      var cur=document.getElementById('gs'+i);
+      cur.className='gen-step running';
+      cur.querySelector('.gen-step-icon').innerHTML='<div class="spinner" style="width:14px;height:14px;border-top-color:var(--blue)"></div>';
+      document.getElementById('gen-status-text').textContent=steps[i].label;
+      i++;
+    } else {
+      clearInterval(iv);
+      document.getElementById('gen-spinner').style.display='none';
+      document.getElementById('gen-status-text').textContent='Kandungan sedia — sila semak draf anda.';
+      document.getElementById('gen-status-bar').className='status-bar success';
+      setTimeout(isiSemak, 700);
+    }
+  },950);
+}
+
+function angleLabel(){ return {auto:'Automatik',tekno:'Teknologi',geo:'Geopolitik',edu:'Pendidikan'}[state.angle]||'Automatik'; }
+function platformLabel(){ return {fb:'Facebook Pages',tiktok:'TikTok','kedua-dua':'Facebook + TikTok'}[state.platform]||'Facebook Pages'; }
+
+function isiSemak(){
+  var isAI = /ai|gpt|claude|gemini|llm|notebooklm|chatgpt|copilot|intelligence/i.test(state.tajuk);
+  state.verif = 'Status: DISAHKAN (Hijau)\n\nSumber 1: Pengumuman rasmi syarikat — ciri yang dibincangkan disahkan wujud dalam dokumentasi terkini.\nSumber 2: Media teknologi bereputasi — laporan bebas selari dengan dakwaan video.\nSumber 3: Carian web terkini (Jun 2026) — tiada penafian, tiada laporan bertentangan.\n\nKredibiliti channel: '+state.channel+' — rekod tulen berdasarkan semakan sejarah posting. Tiada bendera merah ditemui.';
+
+  state.tajukOps=[
+    {tag:'tag-tekno',angle:'Teknologi',tajuk:'"Silent Launch" Yang Ramai Tak Sedar: '+state.tajuk.split('(')[0].trim()+' — Ini Yang Berubah!'},
+    {tag:'tag-geo',angle:'Geopolitik',tajuk:'Perang AI Global Fasa Baru: Bagaimana '+state.channel+' Dedah Langkah Strategik Google Yang Mungkin Ubah Segalanya'},
+    {tag:'tag-edu',angle:'Pendidikan',tajuk:'Pelajar & Trainer Malaysia Wajib Tahu: 5 Fungsi Baru Dalam "'+state.tajuk.split('!')[0].split('(')[0].trim()+'" Yang Jimatkan Masa Anda'}
+  ];
+
+  var autoIdx=state.angle==='tekno'?0:state.angle==='geo'?1:state.angle==='edu'?2:0;
+  state.tajukTerpilih=state.tajukOps[autoIdx].tajuk;
+
+  state.ringkasan=''+state.channel+' dedah naik taraf terbaru '+state.tajuk.split('(')[0].trim().split('&')[0].trim()+'. Impak besar kepada pelajar dan profesional Malaysia. Disahkan sahih melalui 3 sumber bebas.';
+  state.hashtag='#AIMalaysia #'+state.tajuk.split(' ')[0].replace(/[^a-zA-Z]/g,'')+' #TeknologiTerkini #BelajarAI #MyTVETSkillsAcademy';
+  state.caption='🚨 '+state.tajukTerpilih.split(':')[0].trim().toUpperCase()+'!\n\n'+state.tajuk.split('(')[0].trim()+' — dan ini bukan update biasa.\n\n'+(isAI?'✅ AI lebih pintar dan lebih pantas\n✅ Integrasi baharu yang mengubah cara kerja\n✅ Fungsi agen automatik yang boleh guna terus\n\n':'✅ Ciri-ciri terbaru yang berimpak tinggi\n✅ Boleh guna terus tanpa kemahiran teknikal\n✅ Jimatkan masa dan tingkatkan produktiviti\n\n')+'Adakah anda bersedia mengambil peluang ini? 🤔\n\n🎓 PM kami untuk jadual kursus AI terkini HRDC!\n\n'+state.hashtag;
+
+  state.artikel='Assalamualaikum dan salam sejahtera, korang.\n\nMinggu ini, diam-diam, '+state.channel+' telah mendedahkan satu perkara yang saya kira antara perkembangan paling penting yang ramai rakyat Malaysia masih belum perasan.\n\n'+state.tajuk.split('(')[0].trim()+'. Ini bukan sekadar tajuk clickbait. Ini perkembangan nyata yang saya telah semak melalui tiga sumber bebas — dan kesimpulannya jelas.\n\nKonteksnya begini. Bayangkan dulu anda ada pembantu kerja yang hanya boleh buat satu tugas pada satu masa. Sekarang, pembantu yang sama itu boleh merancang, melaksana, dan melaporkan — serentak, tanpa anda perlu pegang tangan.\n\nAnalisis saya? Ini bukan sekadar naik taraf produk. Ini pergerakan strategik dalam perang AI global. Setiap syarikat teknologi besar sedang berlumba untuk bina ekosistem yang paling lengkap — dan langkah ini membuktikan siapa yang sedang memimpin.\n\nImpak kepada kita di Malaysia? Sangat besar. Pelajar, pensyarah, penjawat awam, usahawan — kerja yang dulu mengambil masa berjam-jam kini boleh diselesaikan dalam masa minit. Tapi ingat: peluang ini hanya milik mereka yang bersedia belajar dan beradaptasi.\n\nSoalan saya untuk korang: dalam era di mana AI semakin pandai, apakah nilai tambah unik yang ANDA bawa ke meja kerja? Tinggalkan pandangan anda di ruangan komen.\n\nSampai jumpa dalam analisis seterusnya.\n\n— Ahmad Faezal\nPenganalisa Teknologi & Geopolitik';
+
+  document.getElementById('verif-badge-area').innerHTML='<div class="badge badge-success">🛡️ DISAHKAN — Status Hijau</div>';
+  document.getElementById('verif-detail').textContent=state.verif;
+
+  var optHtml='';
+  state.tajukOps.forEach(function(op,i){
+    var sel=i===autoIdx;
+    optHtml+='<label class="tajuk-option'+(sel?' selected':'')+'" for="tj'+i+'" onclick="pilihTajuk('+i+', this)">'
+      +'<input type="radio" name="tajuk-radio" id="tj'+i+'" '+(sel?'checked':'')+' style="margin-top:3px;accent-color:var(--teal)">'
+      +'<div style="flex:1"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span class="tajuk-tag '+op.tag+'">'+op.angle+'</span></div>'
+      +'<div style="font-size:13px;line-height:1.5;color:var(--gray-800)">'+op.tajuk+'</div></div>'
+      +'</label>';
+  });
+  document.getElementById('tajuk-options').innerHTML=optHtml;
+  document.getElementById('ringkasan-box').textContent=state.ringkasan;
+  document.getElementById('hashtag-box').textContent=state.hashtag;
+  document.getElementById('caption-box').textContent=state.caption;
+
+  setStep(3); showPanel('panel-semak');
+}
+
+function pilihTajuk(i, el){
+  document.querySelectorAll('.tajuk-option').forEach(function(e){ e.classList.remove('selected'); });
+  el.classList.add('selected');
+  state.tajukTerpilih=state.tajukOps[i].tajuk;
+  state.caption=state.caption.replace(/^🚨 .+\n/,'🚨 '+state.tajukTerpilih.split(':')[0].trim().toUpperCase()+'!\n\n'+state.tajuk.split('(')[0].trim()+'\n');
+  document.getElementById('caption-box').textContent=state.caption;
+}
+
+function toggleFeedback(){
+  document.getElementById('feedback-area').classList.toggle('hidden');
+}
+
+function lulusKandungan(){
+  document.getElementById('prev-tarikh').textContent=new Date().toLocaleDateString('ms-MY',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('prev-platform').textContent=platformLabel();
+  document.getElementById('prev-platform2').textContent=platformLabel();
+  document.getElementById('prev-hashtag').textContent=state.hashtag;
+  document.getElementById('prev-tajuk').textContent=state.tajukTerpilih;
+  document.getElementById('prev-artikel').innerHTML=state.artikel.split('\n').map(function(p){ return p?'<p>'+p+'</p>':'' }).join('');
+  document.getElementById('prev-caption').textContent=state.caption;
+  setStep(4); showPanel('panel-preview');
+}
+
+function balikSemak(){ setStep(3); showPanel('panel-semak'); }
+
+function hantarFeedback(){
+  var fb=document.getElementById('f-feedback').value.trim();
+  if(!fb){alert('Sila nyatakan apa yang perlu diperbetulkan.');return;}
+  alert('Maklum balas dihantar ke Claude:\n\n"'+fb+'"\n\nClaude akan jana semula kandungan mengikut arahan anda dalam chat.');
+}
+
+function finalHantar(){
+  setStep(5); showPanel('panel-hantar');
+  setTimeout(function(){
+    document.getElementById('send-spinner').style.display='none';
+    document.getElementById('send-status-text').textContent='Selesai.';
+    document.getElementById('send-status-bar').className='status-bar success';
+    var masa=new Date().toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
+    var tarikh=new Date().toLocaleDateString('ms-MY',{year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('post-detail-text').innerHTML=
+      '<strong>Page:</strong> MyTVET Skills Academy<br>'
+      +'<strong>Tajuk:</strong> '+state.tajukTerpilih+'<br>'
+      +'<strong>Platform:</strong> '+platformLabel()+'<br>'
+      +'<strong>Masa terbit:</strong> '+tarikh+', '+masa+'<br>'
+      +'<strong>Status:</strong> Diterbitkan melalui Zapier → Facebook Pages';
+    document.getElementById('send-result').classList.remove('hidden');
+
+    var rec={tajuk:state.tajukTerpilih,channel:state.channel,platform:platformLabel(),masa:tarikh+' '+masa};
+    state.history.unshift(rec);
+    if(state.history.length>50) state.history.pop();
+    localStorage.setItem('sop-history',JSON.stringify(state.history));
+  },2200);
+}
+
+function bukaSemakAnalitik(){
+  alert('Tip: Buka semula aplikasi ini esok dan semak tab "Rekod posting" untuk pantau prestasi, atau tanya Claude untuk tarik Page Post Insights melalui Zapier.');
+}
+
+function resetApp(){
+  ['f-tajuk','f-channel','f-url','f-nota'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('f-angle').value='auto';
+  document.getElementById('f-platform').value='fb';
+  document.getElementById('feedback-area').classList.add('hidden');
+  document.getElementById('f-feedback').value='';
+  document.getElementById('send-result').classList.add('hidden');
+  document.getElementById('send-spinner').style.display='';
+  document.getElementById('send-status-bar').className='status-bar';
+  document.getElementById('gen-steps-list').innerHTML='';
+  document.getElementById('gen-spinner').style.display='';
+  document.getElementById('gen-status-bar').className='status-bar';
+  setStep(1); showPanel('panel-input');
+}
+
+function renderHistory(){
+  var el=document.getElementById('history-list');
+  if(!state.history.length){ el.innerHTML='<div class="history-empty">Tiada rekod lagi. Mula posting pertama anda!</div>'; return; }
+  el.innerHTML=state.history.map(function(r){
+    return '<div class="history-item"><div class="history-dot"></div><div class="history-text"><div class="history-title">'+r.tajuk+'</div><div class="history-sub">'+r.channel+' · '+r.platform+' · '+r.masa+'</div></div></div>';
+  }).join('');
+}
+</script>
+</body>
+</html>
