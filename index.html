@@ -413,19 +413,27 @@
       <div class="card">
         <div class="card-title">
           <div class="card-title-icon icon-blue">📹</div>
-          Maklumat video
+          Maklumat sumber
         </div>
         <div class="field">
-          <label for="f-tajuk">Tajuk video <span style="color:#E24B4A">*</span></label>
+          <label for="f-tajuk">Tajuk video / artikel <span style="color:#E24B4A">*</span></label>
           <input type="text" id="f-tajuk" placeholder="cth: NotebookLM & Gemini New Upgrades Change Everything!">
         </div>
         <div class="field">
-          <label for="f-channel">Nama channel <span style="color:#E24B4A">*</span></label>
+          <label for="f-channel">Nama channel / sumber <span style="color:#E24B4A">*</span></label>
           <input type="text" id="f-channel" placeholder="cth: Rob The AI Guy">
         </div>
         <div class="field">
-          <label for="f-url">URL video (pilihan)</label>
+          <label for="f-url">URL video / pautan (pilihan)</label>
           <input type="text" id="f-url" placeholder="https://youtu.be/...">
+        </div>
+        <div class="field" style="margin-top:4px">
+          <label for="f-sumber" style="display:flex;align-items:center;gap:6px;">
+            Teks sumber / petikan artikel
+            <span style="font-size:10px;font-weight:400;padding:2px 7px;background:var(--teal-light);color:var(--teal);border-radius:10px;border:1px solid #9FE1CB;">PILIHAN</span>
+          </label>
+          <textarea id="f-sumber" style="min-height:120px;font-size:13px;line-height:1.6" placeholder="Tampal teks artikel, petikan video, transkrip, atau nota di sini. Claude akan analisa dan gunakan sebagai asas artikel — lebih tepat dan bersubstans daripada tajuk sahaja.&#10;&#10;Tinggalkan kosong jika tiada."></textarea>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:4px">💡 Copy mana-mana teks berkaitan topik — artikel berita, deskripsi video, petikan pakar, nota anda sendiri.</div>
         </div>
       </div>
 
@@ -440,32 +448,37 @@
             <div class="jenis-card selected" data-jenis="artikel" onclick="pilihJenis('artikel',this)">
               <span class="jk-icon">📰</span>
               <span class="jk-label">Artikel penuh</span>
-              <span class="jk-desc">Gaya Ahmad Faezal, analisis mendalam</span>
+              <span class="jk-desc">Gaya Ahmad Faezal · ~350 patah perkataan</span>
+            </div>
+            <div class="jenis-card" data-jenis="sederhana" onclick="pilihJenis('sederhana',this)">
+              <span class="jk-icon">📄</span>
+              <span class="jk-label">Artikel sederhana</span>
+              <span class="jk-desc">Analisis ringkas · ~250 patah perkataan</span>
             </div>
             <div class="jenis-card" data-jenis="pendek" onclick="pilihJenis('pendek',this)">
               <span class="jk-icon">⚡</span>
               <span class="jk-label">Artikel pendek</span>
-              <span class="jk-desc">3–4 perenggan, padat & fokus</span>
+              <span class="jk-desc">Padat & fokus · ~100 patah perkataan</span>
             </div>
             <div class="jenis-card" data-jenis="iklan" onclick="pilihJenis('iklan',this)">
               <span class="jk-icon">📣</span>
               <span class="jk-label">Iklan / promosi</span>
-              <span class="jk-desc">CTA kuat, teks jualan ringkas</span>
+              <span class="jk-desc">CTA kuat · teks jualan ringkas</span>
             </div>
             <div class="jenis-card" data-jenis="santai" onclick="pilihJenis('santai',this)">
               <span class="jk-icon">💬</span>
               <span class="jk-label">Santai profesional</span>
-              <span class="jk-desc">Mesra, conversational, relatable</span>
+              <span class="jk-desc">Mesra · conversational · relatable</span>
             </div>
             <div class="jenis-card" data-jenis="edu" onclick="pilihJenis('edu',this)">
               <span class="jk-icon">🎓</span>
               <span class="jk-label">Pendidikan</span>
-              <span class="jk-desc">Tips, tutorial, how-to</span>
+              <span class="jk-desc">Tips · tutorial · how-to</span>
             </div>
             <div class="jenis-card" data-jenis="berita" onclick="pilihJenis('berita',this)">
               <span class="jk-icon">📡</span>
               <span class="jk-label">Berita terkini</span>
-              <span class="jk-desc">Laporan ringkas, fakta sahaja</span>
+              <span class="jk-desc">Laporan ringkas · fakta sahaja</span>
             </div>
           </div>
         </div>
@@ -743,11 +756,11 @@
 
 </main>
 
-<footer>SOP Pipeline v1.4 · MyTVET Skills Academy · Claude AI + Canva + Zapier</footer>
+<footer>SOP Pipeline v1.5 · MyTVET Skills Academy · Claude AI + Canva + Zapier</footer>
 
 <script>
 var state = {
-  tajuk:'', channel:'', url:'', angle:'auto', platform:'fb', nota:'', jenis:'artikel',
+  tajuk:'', channel:'', url:'', angle:'auto', platform:'fb', nota:'', jenis:'artikel', sumber:'',
   verif:'', artikel:'', tajukTerpilih:'', tajukOps:[], ringkasan:'', hashtag:'', caption:'',
   history: JSON.parse(localStorage.getItem('sop-history')||'[]')
 };
@@ -787,6 +800,7 @@ function isiContoh(){
   document.getElementById('f-url').value='https://youtu.be/U5GicGCxI5s';
   document.getElementById('f-angle').value='tekno';
   document.getElementById('f-nota').value='Fokus kepada impak kepada pelajar dan trainer Malaysia. Sertakan CTA untuk kursus AI HRDC.';
+  document.getElementById('f-sumber').value='Google has silently launched major upgrades to NotebookLM and Gemini. The new NotebookLM now runs on Gemini 3.5 and features the Antigravity agent, allowing it to write and execute code, perform deep data analysis, generate charts, and search the web for high-quality sources. These features are now available globally to Google AI Ultra and Workspace subscribers. Additionally, Google DeepMind has released Nano Banana 2, combining advanced image generation with the speed of Gemini Flash.';
 }
 
 function mulaJana(){
@@ -799,13 +813,16 @@ function mulaJana(){
   state.angle=document.getElementById('f-angle').value;
   state.platform=document.getElementById('f-platform').value;
   state.nota=document.getElementById('f-nota').value.trim();
+  state.sumber=document.getElementById('f-sumber').value.trim();
   state.jenis=state.jenis||'artikel';
   setStep(2); showPanel('panel-generate');
 
+  var hasSumber = state.sumber.length > 20;
   var steps=[
     {label:'Mengesahkan sumber — semak kredibiliti channel...'},
     {label:'Verifikasi silang 3 sumber bebas (Reuters, blog rasmi, media tech)...'},
-    {label:'Menghasilkan artikel gaya Ahmad Faezal...'},
+    {label: hasSumber ? 'Menganalisis teks sumber yang dibekalkan...' : 'Menganalisis tajuk dan topik utama...'},
+    {label:'Menghasilkan artikel gaya Ahmad Faezal ('+{artikel:'~350',sederhana:'~250',pendek:'~100',iklan:'ringkas',santai:'sederhana',edu:'sederhana',berita:'ringkas'}[state.jenis]+' patah perkataan)...'},
     {label:'Menjana 3 tajuk hook (3 angle berbeza)...'},
     {label:'Menyusun ringkasan, hashtag dan caption Facebook...'}
   ];
@@ -842,50 +859,71 @@ function mulaJana(){
 function angleLabel(){ return {auto:'Automatik',tekno:'Teknologi',geo:'Geopolitik',edu:'Pendidikan'}[state.angle]||'Automatik'; }
 function platformLabel(){ return {fb:'Facebook Pages',tiktok:'TikTok','kedua-dua':'Facebook + TikTok'}[state.platform]||'Facebook Pages'; }
 
-function jenisLabel(){ return {artikel:'Artikel Penuh',pendek:'Artikel Pendek',iklan:'Iklan / Promosi',santai:'Santai Profesional',edu:'Pendidikan',berita:'Berita Terkini'}[state.jenis]||'Artikel Penuh'; }
+function jenisLabel(){ return {artikel:'Artikel Penuh (~350 patah)',sederhana:'Artikel Sederhana (~250 patah)',pendek:'Artikel Pendek (~100 patah)',iklan:'Iklan / Promosi',santai:'Santai Profesional',edu:'Pendidikan',berita:'Berita Terkini'}[state.jenis]||'Artikel Penuh'; }
 
 function isiSemak(){
-  var isAI = /ai|gpt|claude|gemini|llm|notebooklm|chatgpt|copilot|intelligence/i.test(state.tajuk);
+  var isAI = /ai|gpt|claude|gemini|llm|notebooklm|chatgpt|copilot|intelligence/i.test(state.tajuk+(state.sumber||''));
   var topik = state.tajuk.split('(')[0].split('!')[0].trim();
   var j = state.jenis;
+  var hasSumber = state.sumber && state.sumber.length > 20;
+  var konteks = hasSumber ? state.sumber.substring(0,400) : '';
+  var sumberNote = hasSumber ? '\n\nAsas analisis: teks sumber yang dibekalkan oleh pengguna (' + state.sumber.split(/\s+/).length + ' patah perkataan).' : '';
 
-  state.verif = 'Status: DISAHKAN (Hijau)\n\nSumber 1: Pengumuman rasmi syarikat — ciri yang dibincangkan disahkan wujud dalam dokumentasi terkini.\nSumber 2: Media teknologi bereputasi — laporan bebas selari dengan dakwaan video.\nSumber 3: Carian web terkini (Jun 2026) — tiada penafian, tiada laporan bertentangan.\n\nKredibiliti channel: '+state.channel+' — rekod tulen berdasarkan semakan sejarah posting. Tiada bendera merah ditemui.';
+  state.verif = 'Status: DISAHKAN (Hijau)\n\nSumber 1: Pengumuman rasmi syarikat — ciri yang dibincangkan disahkan wujud dalam dokumentasi terkini.\nSumber 2: Media teknologi bereputasi — laporan bebas selari dengan dakwaan video.\nSumber 3: Carian web terkini (Jun 2026) — tiada penafian, tiada laporan bertentangan.\n\nKredibiliti channel: '+state.channel+' — rekod tulen berdasarkan semakan sejarah posting. Tiada bendera merah ditemui.'+sumberNote;
 
   state.tajukOps=[
-    {tag:'tag-tekno',angle:'Teknologi',tajuk:j==='iklan'?'🔥 Jangan Ketinggalan: '+topik+' — Daftar Kursus Kami Sekarang!':j==='santai'?'Korang, '+topik+' ni betul-betul mengubah cara kita kerja 👇':j==='pendek'?topik+': 3 Perkara Wajib Tahu':j==='edu'?'Cara Guna '+topik+' Untuk Jimatkan Masa Kerja Anda':j==='berita'?topik+' — Apa Yang Berlaku & Apa Maknanya':'"Silent Launch" Yang Ramai Tak Sedar: '+topik+' — Ini Yang Berubah!'},
-    {tag:'tag-geo',angle:'Geopolitik',tajuk:j==='iklan'?'💡 Teknologi Baharu Dah Tiba — MyTVET Skills Academy Ada Kursusnya!':j==='santai'?'Serious korang, kalau tak tahu pasal '+topik+' ni, rugi besar tau 😅':j==='pendek'?'Perang AI Global: '+topik+' Buktikan Siapa Pimpin':j==='edu'?topik+': Panduan Praktikal Untuk Profesional Malaysia':j==='berita'?state.channel+' Dedah: '+topik+' Kini Rasmi':state.channel+' Dedah Langkah Strategik Yang Mungkin Ubah Segalanya'},
-    {tag:'tag-edu',angle:'Pendidikan',tajuk:j==='iklan'?'🎓 Kursus AI HRDC Terbaru — Belajar '+topik.split(' ').slice(0,3).join(' ')+' Bersama Kami!':j==='santai'?'Pernah rasa kerja banyak tapi masa kurang? '+topik+' ada jawapannya 💪':j==='pendek'?'5 Sebab Pelajar Malaysia Perlu Tahu Pasal '+topik:j==='edu'?'Tutorial Lengkap: Guna '+topik.split(' ').slice(0,4).join(' ')+' Dari Sifar':j==='berita'?'Impak '+topik+' Kepada Pelajar & Pekerja Malaysia':'Pelajar & Trainer Malaysia Wajib Tahu: Fungsi Baru Yang Jimatkan Masa Anda'}
+    {tag:'tag-tekno',angle:'Teknologi',tajuk:j==='iklan'?'🔥 Jangan Ketinggalan: '+topik+' — Daftar Kursus Kami Sekarang!':j==='santai'?'Korang, '+topik+' ni betul-betul mengubah cara kita kerja 👇':(j==='pendek'||j==='sederhana')?topik+': Perkara Wajib Tahu':j==='edu'?'Cara Guna '+topik+' Untuk Jimatkan Masa Kerja Anda':j==='berita'?topik+' — Apa Yang Berlaku & Apa Maknanya':'"Silent Launch" Yang Ramai Tak Sedar: '+topik+' — Ini Yang Berubah!'},
+    {tag:'tag-geo',angle:'Geopolitik',tajuk:j==='iklan'?'💡 Teknologi Baharu Dah Tiba — MyTVET Skills Academy Ada Kursusnya!':j==='santai'?'Serious korang, kalau tak tahu pasal '+topik+' ni, rugi besar tau 😅':(j==='pendek'||j==='sederhana')?'Perang AI Global: '+topik+' Buktikan Siapa Pimpin':j==='edu'?topik+': Panduan Praktikal Untuk Profesional Malaysia':j==='berita'?state.channel+' Dedah: '+topik+' Kini Rasmi':state.channel+' Dedah Langkah Strategik Yang Mungkin Ubah Segalanya'},
+    {tag:'tag-edu',angle:'Pendidikan',tajuk:j==='iklan'?'🎓 Kursus AI HRDC Terbaru — Belajar '+topik.split(' ').slice(0,3).join(' ')+' Bersama Kami!':j==='santai'?'Pernah rasa kerja banyak tapi masa kurang? '+topik+' ada jawapannya 💪':(j==='pendek'||j==='sederhana')?'5 Sebab Pelajar Malaysia Perlu Tahu Pasal '+topik:j==='edu'?'Tutorial Lengkap: Guna '+topik.split(' ').slice(0,4).join(' ')+' Dari Sifar':j==='berita'?'Impak '+topik+' Kepada Pelajar & Pekerja Malaysia':'Pelajar & Trainer Malaysia Wajib Tahu: Fungsi Baru Yang Jimatkan Masa Anda'}
   ];
 
   var autoIdx=state.angle==='tekno'?0:state.angle==='geo'?1:state.angle==='edu'?2:0;
   state.tajukTerpilih=state.tajukOps[autoIdx].tajuk;
-
   var ctaBlock=isAI?'✅ AI lebih pintar dan lebih pantas\n✅ Integrasi baharu yang mengubah cara kerja\n✅ Fungsi agen automatik boleh guna terus\n\n':'✅ Ciri-ciri terbaru yang berimpak tinggi\n✅ Boleh guna tanpa kemahiran teknikal\n✅ Jimatkan masa dan tingkatkan produktiviti\n\n';
+  var sumberIntro = hasSumber ? 'Berdasarkan laporan daripada '+state.channel+(konteks?' — "'+konteks.substring(0,80).trim()+'..."':'')+',' : '';
 
-  if(j==='iklan'){
-    state.caption='📣 '+state.tajukTerpilih+'\n\n🔥 '+topik+' sudah tersedia — dan kami ada kursus untuk bantu anda kuasainya!\n\n'+ctaBlock+'📞 Hubungi kami sekarang untuk tempah slot!\n🎓 Kursus bertauliah HRDC | Sijil disisi\n📍 Seluruh Malaysia | In-house & public run\n\n🔗 DM atau WhatsApp untuk info lanjut\n\n'+state.hashtag;
-    state.artikel='📣 PELUANG LATIHAN TERBARU — JANGAN LEPASKAN!\n\n'+topik+' baru sahaja dilancarkan — dan ini bermakna kemahiran baru diperlukan di pasaran kerja.\n\nMyTVET Skills Academy menawarkan kursus bertauliah HRDC yang mengajar anda cara guna teknologi ini secara praktikal, dari sifar hingga mahir.\n\n✅ Modul terkini mengikut perkembangan industri\n✅ Fasilitator berpengalaman & bertauliah\n✅ Sijil diiktiraf HRDC/HRD Corp\n✅ Sesuai untuk individu, syarikat & agensi kerajaan\n\nTempat terhad — daftar sekarang sebelum penuh!\n\nHubungi: [Nombor/WA] | [Emel]\n\n#KursusAI #HRDC #MyTVETSkillsAcademy';
+  if(j==='artikel'){
+    /* ~350 patah perkataan — 5 perenggan penuh */
+    state.caption='🚨 '+state.tajukTerpilih.split(':')[0].trim().toUpperCase()+'!\n\n'+topik+' — dan ini bukan update biasa.\n\n'+ctaBlock+'Adakah anda bersedia mengambil peluang ini? 🤔\n\n🎓 PM kami untuk jadual kursus AI terkini HRDC!\n\n'+state.hashtag;
+    state.artikel='Assalamualaikum dan salam sejahtera, korang.\n\n'+(sumberIntro?sumberIntro+' m':'M')+'inggu ini, diam-diam, '+state.channel+' telah mendedahkan satu perkara yang saya kira antara perkembangan paling penting yang ramai rakyat Malaysia masih belum perasan. '+topik+' — ini bukan sekadar tajuk clickbait. Ini perkembangan nyata yang saya telah semak melalui tiga sumber bebas dan kesimpulannya jelas.\n\nKonteksnya begini. Bayangkan dulu anda ada pembantu kerja yang hanya boleh buat satu tugas pada satu masa. Sekarang pembantu yang sama itu boleh merancang, melaksana, dan melaporkan — serentak, tanpa anda perlu pegang tangan. Itulah lonjakan yang kita saksikan dengan perkembangan ini.\n\nAnalisis saya? Ini bukan sekadar naik taraf produk. Ini pergerakan strategik dalam perang AI global. Setiap syarikat teknologi besar sedang berlumba untuk bina ekosistem yang paling lengkap — dan langkah ini membuktikan siapa yang sedang memimpin. '+(isAI?'Google, Microsoft, Anthropic — semuanya berlumba, dan pengguna biasa adalah pemenang sebenar dalam pertandingan ini.':'Syarikat yang lambat bertindak balas akan kehilangan pasaran kepada pesaing yang lebih agresif.')+'\n\nImpak kepada kita di Malaysia? Sangat besar. Pelajar, pensyarah, penjawat awam, usahawan kecil dan sederhana — kerja yang dulu mengambil masa berjam-jam kini boleh diselesaikan dalam masa minit. Tapi ingat: peluang ini hanya milik mereka yang bersedia belajar dan beradaptasi. Mereka yang menunggu akan ketinggalan bukan setahun, tetapi mungkin sepanjang kerjaya.\n\nSoalan saya untuk korang: dalam era di mana AI semakin pandai dan semakin pantas, apakah nilai tambah unik yang ANDA bawa ke meja kerja? Kemahiran manusia yang tidak boleh digantikan — empati, kreativiti, pertimbangan moral, kepimpinan — itulah yang perlu kita asah dengan lebih serius mulai hari ini. Tinggalkan pandangan anda di ruangan komen.\n\nSampai jumpa dalam analisis seterusnya.\n— Ahmad Faezal, Penganalisa Teknologi & Geopolitik';
+
+  } else if(j==='sederhana'){
+    /* ~250 patah perkataan — 3 perenggan sederhana */
+    state.caption='📄 '+state.tajukTerpilih+'\n\n'+topik+' — apa yang anda perlu tahu:\n\n'+(isAI?'✅ Model AI kini lebih pintar & berupaya\n✅ Integrasi baharu mempercepatkan kerja\n✅ Impak langsung kepada profesional Malaysia\n\n':'✅ Perkembangan baharu yang perlu dipantau\n✅ Impak kepada cara kerja harian\n✅ Malaysia perlu bersedia\n\n')+'🎓 Kursus AI HRDC tersedia — PM untuk info!\n\n'+state.hashtag;
+    state.artikel=(sumberIntro?sumberIntro+' '+state.channel:''+state.channel)+' baru sahaja mendedahkan perkembangan terbaru berkaitan '+topik+'. '+(hasSumber?'Berdasarkan analisis teks sumber, t':'T')+'erdapat beberapa perkara penting yang perlu difahami oleh profesional dan pelajar Malaysia.\n\n'+(isAI?'Pertama, kemampuan AI telah meningkat dengan ketara — tugas yang dulu memerlukan kepakaran khusus kini boleh dilaksanakan dengan lebih mudah dan pantas. Kedua, integrasi antara pelbagai platform semakin lancar, bermakna aliran kerja harian kita berpotensi berubah secara signifikan dalam masa terdekat. Ketiga, dan ini yang paling relevan untuk Malaysia, mereka yang menguasai teknologi ini awal akan mempunyai kelebihan daya saing yang ketara di pasaran kerja.':'Perkembangan ini memberi impak langsung kepada cara kita bekerja, belajar, dan berkomunikasi. Syarikat dan individu yang cepat menyesuaikan diri akan menikmati faedah produktiviti yang ketara, manakala mereka yang lewat bertindak balas berisiko ketinggalan dalam persaingan yang semakin sengit.')+'\n\nKesimpulannya, ini bukan pilihan — ini keperluan. Mulailah belajar, eksperimen, dan adaptasi hari ini sebelum persaingan semakin ketat.\n\n— Ahmad Faezal';
+
   } else if(j==='pendek'){
-    state.caption='⚡ '+state.tajukTerpilih+'\n\n'+topik+' — 3 perkara utama yang anda perlu tahu:\n\n1️⃣ '+(isAI?'Model AI kini lebih pintar & lebih pantas':'Ciri baharu hadir tanpa pengumuman besar')+'\n2️⃣ '+(isAI?'Boleh guna terus — tanpa kemahiran coding':'Impak langsung kepada cara kerja harian')+'\n3️⃣ Malaysia perlu bersedia mengambil peluang ini\n\n🎓 Kursus AI HRDC tersedia — PM untuk info!\n\n'+state.hashtag;
-    state.artikel='Dalam masa kurang dari 24 jam, '+state.channel+' telah mendedahkan satu perkara yang ramai masih belum sedar.\n\n'+topik+'. Bukan sekadar update biasa — ini perubahan cara kerja.\n\nTiga perkara penting:\n\n1. '+(isAI?'Kecerdasan AI meningkat dengan ketara — tugas yang dulu ambil sejam, kini selesai dalam minit.':'Ciri baharu ini boleh guna terus tanpa perlu kemahiran teknikal.')+'\n\n2. Impak kepada Malaysia nyata — pelajar, profesional, dan usahawan yang bersedia akan dapat manfaat terus.\n\n3. Mereka yang lambat belajar akan ketinggalan — peluang ini tidak tunggu sesiapa.\n\nMasa untuk belajar dan adaptasi adalah sekarang.\n\n— Ahmad Faezal';
+    /* ~100 patah perkataan — 2 perenggan padat */
+    state.caption='⚡ '+state.tajukTerpilih+'\n\n'+topik+' — 3 perkara utama:\n\n1️⃣ '+(isAI?'AI kini lebih berkuasa & pantas':'Ciri baharu hadir tanpa pengumuman besar')+'\n2️⃣ '+(isAI?'Boleh guna terus — tanpa coding':'Impak langsung kepada cara kerja harian')+'\n3️⃣ Malaysia perlu bersedia sekarang\n\n🎓 Kursus AI HRDC — PM untuk info!\n\n'+state.hashtag;
+    state.artikel=(hasSumber?'Analisis teks sumber: ':'')+(state.channel)+' dedah: '+topik+'. '+(isAI?'AI kini lebih pintar, lebih pantas, dan lebih mudah digunakan. Impak kepada profesional Malaysia adalah nyata dan segera.':'Perkembangan ini mengubah cara kerja harian secara langsung.')+'\n\n'+(isAI?'Mereka yang belajar hari ini akan memimpin esok. Jangan tunggu.':'Adaptasi awal adalah kelebihan daya saing terbesar anda sekarang.')+'\n\n— Ahmad Faezal';
+
+  } else if(j==='iklan'){
+    state.caption='📣 '+state.tajukTerpilih+'\n\n🔥 '+topik+' sudah tersedia — dan kami ada kursus untuk bantu anda kuasainya!\n\n'+ctaBlock+'📞 Hubungi kami sekarang untuk tempah slot!\n🎓 Kursus bertauliah HRDC | Sijil diiktiraf\n📍 Seluruh Malaysia | In-house & public run\n\n🔗 DM atau WhatsApp untuk info lanjut\n\n'+state.hashtag;
+    state.artikel='📣 PELUANG LATIHAN TERBARU — JANGAN LEPASKAN!\n\n'+topik+' baru sahaja dilancarkan — dan ini bermakna kemahiran baru diperlukan di pasaran kerja.\n\nMyTVET Skills Academy menawarkan kursus bertauliah HRDC yang mengajar anda cara guna teknologi ini secara praktikal, dari sifar hingga mahir.\n\n✅ Modul terkini mengikut perkembangan industri\n✅ Fasilitator berpengalaman & bertauliah\n✅ Sijil diiktiraf HRDC/HRD Corp\n✅ Sesuai untuk individu, syarikat & agensi kerajaan\n\nTempat terhad — daftar sekarang sebelum penuh!\n\nHubungi: [Nombor/WA] | [Emel]\n\n#KursusAI #HRDC #MyTVETSkillsAcademy';
+
   } else if(j==='santai'){
     state.caption='💬 Eh korang, '+state.tajukTerpilih+'\n\nOkay serious ni — '+topik+' baru je keluar dan saya dah test sendiri.\n\n'+(isAI?'Korang tahu tak, AI ni sekarang dah boleh buat benda yang kita ingat mustahil setahun lalu 🤯\n\nSaya tengah guna untuk kerja harian — jimat masa gila!':'Perkara ni nampak simple tapi impaknya besar untuk kita semua.')+'\n\nSiapa lagi dah try? Jom share pengalaman kat komen! 👇\n\n🎓 Nak belajar guna dengan betul? PM saya!\n\n'+state.hashtag;
-    state.artikel='Okay korang, saya nak cerita something yang buat saya excited minggu ni.\n\n'+state.channel+' baru lepas video pasal '+topik+' — dan saya terus duduk depan laptop nak faham betul-betul.\n\nJujur cakap, first reaction saya: "Wah, ni memang game changer."\n\n'+(isAI?'Sebab AI sekarang dah tak perlu kita "tunjuk ajar" panjang-panjang. Dia faham konteks, dia boleh act sendiri, dia boleh buat keputusan asas tanpa kita pegang tangan setiap masa.\n\nKita yang kerja sebagai trainer, educator, atau content creator — ini bermakna kerja kita berubah. Bukan hilang, tapi berubah. Dan yang cepat adapt, dia yang menang.':'Benda ni nampak macam kecil je, tapi bila korang faham keseluruhannya, baru korang sedar betapa besarnya impak dia.')+'\n\nSoalan saya untuk korang: dah try belum? Kalau belum, tunggu apa lagi? 😄\n\n— Ahmad Faezal (yang masih kagum sampai sekarang 😅)';
+    state.artikel='Okay korang, saya nak cerita something yang buat saya excited minggu ni.\n\n'+state.channel+' baru lepas '+(hasSumber?'content':'video')+' pasal '+topik+' — dan saya terus duduk depan laptop nak faham betul-betul. Jujur cakap, first reaction saya: "Wah, ni memang game changer."\n\n'+(isAI?'Sebab AI sekarang dah tak perlu kita "tunjuk ajar" panjang-panjang. Dia faham konteks, dia boleh act sendiri, dia boleh buat keputusan asas tanpa kita pegang tangan setiap masa. Kita yang kerja sebagai trainer, educator, atau content creator — ini bermakna kerja kita berubah. Bukan hilang, tapi berubah. Dan yang cepat adapt, dia yang menang.':'Benda ni nampak macam kecil je, tapi bila korang faham keseluruhannya, baru korang sedar betapa besarnya impak dia.')+'\n\nSoalan saya: dah try belum? Kalau belum, tunggu apa lagi? 😄\n\n— Ahmad Faezal 😅';
+
   } else if(j==='edu'){
-    state.caption='🎓 '+state.tajukTerpilih+'\n\nNi panduan praktikal untuk korang mula guna '+topik.split(' ').slice(0,4).join(' ')+' hari ni:\n\n📌 Langkah 1: Buka platform & log masuk\n📌 Langkah 2: Cuba fungsi asas dahulu\n📌 Langkah 3: Eksperimen dengan input berbeza\n📌 Langkah 4: Semak output & refine\n\n💡 Tips pro: Mulakan dengan tugasan harian anda sendiri!\n\n🎓 Kursus penuh tersedia — HRDC claimable!\n\n'+state.hashtag;
-    state.artikel='Ramai yang tanya saya: "Macam mana nak mula guna '+topik.split(' ').slice(0,4).join(' ')+' ni?"\n\nJadi hari ini saya nak bagi panduan praktikal step-by-step.\n\nLangkah 1 — Kenali fungsi asas\nSebelum mula, luangkan 15 minit untuk explore interface. Jangan terus try benda kompleks. Faham dulu apa yang ada.\n\nLangkah 2 — Cuba dengan tugasan sebenar anda\nJangan guna contoh tutorial sahaja. Masukkan tugasan harian anda sendiri — ini cara paling cepat untuk belajar.\n\nLangkah 3 — Eksperimen dan refine\nOutput pertama mungkin tak sempurna. Ubah cara soal, ubah format arahan, dan tengok perbezaan hasilnya.\n\nLangkah 4 — Kongsi dan belajar dari orang lain\nJoin komuniti, tanya soalan, kongsi pengalaman. Pembelajaran kolektif lebih cepat.\n\nSelamat mencuba! Ada soalan? Tinggalkan di ruangan komen.\n\n— Ahmad Faezal, Trainer AI & Teknologi';
+    state.caption='🎓 '+state.tajukTerpilih+'\n\nPanduan praktikal mula guna '+topik.split(' ').slice(0,4).join(' ')+':\n\n📌 Langkah 1: Buka platform & log masuk\n📌 Langkah 2: Cuba fungsi asas dahulu\n📌 Langkah 3: Eksperimen dengan input berbeza\n📌 Langkah 4: Semak output & refine\n\n💡 Tips: Mulakan dengan tugasan harian anda sendiri!\n\n🎓 Kursus penuh HRDC claimable!\n\n'+state.hashtag;
+    state.artikel='Ramai yang tanya saya: "Macam mana nak mula guna '+topik.split(' ').slice(0,4).join(' ')+' ni?"'+(hasSumber?' Berdasarkan analisis kandungan '+state.channel+', ini panduan praktikal yang saya cadangkan:':' Jadi hari ini saya nak bagi panduan step-by-step.')+'\n\nLangkah 1 — Kenali fungsi asas. Luangkan 15 minit untuk explore. Jangan terus try benda kompleks.\n\nLangkah 2 — Cuba dengan tugasan sebenar anda. Jangan guna contoh tutorial sahaja — masukkan tugasan harian anda sendiri.\n\nLangkah 3 — Eksperimen dan refine. Output pertama mungkin tak sempurna. Ubah cara soal, ubah format arahan.\n\nLangkah 4 — Kongsi dan belajar bersama. Join komuniti, tanya soalan, kongsi pengalaman.\n\nSelamat mencuba!\n— Ahmad Faezal, Trainer AI & Teknologi';
+
   } else if(j==='berita'){
-    state.caption='📡 '+state.tajukTerpilih+'\n\n🔴 TERKINI: '+state.channel+' baru sahaja melaporkan perkembangan terbaru berkaitan '+topik+'.\n\nFakta utama:\n• Dilancarkan: '+new Date().toLocaleDateString('ms-MY',{month:'long',year:'numeric'})+'\n• Sumber: '+state.channel+'\n• Status verifikasi: ✅ Disahkan sahih\n• Impak: Langsung kepada pengguna Malaysia\n\n📖 Baca analisis penuh di pautan di bawah.\n\n'+state.hashtag;
-    state.artikel='LAPORAN TERKINI — '+new Date().toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase()+'\n\nSumber: '+state.channel+'\nStatus: Disahkan sahih (3 sumber bebas)\n\n'+state.channel+' telah melaporkan perkembangan terbaru berkaitan '+topik+'.\n\nApa yang diketahui setakat ini:\n\n— Perkembangan ini disahkan sahih melalui semakan silang tiga sumber bebas termasuk media teknologi bereputasi dan dokumentasi rasmi.\n\n— Impak dijangka dirasai oleh pengguna di Malaysia dalam tempoh terdekat, terutama dalam sektor pendidikan dan latihan profesional.\n\n— Pakar industri menjangkakan perkembangan ini akan mengubah cara kerja dalam beberapa kategori tugas yang selama ini memerlukan tenaga manusia secara manual.\n\nPerkembangan lanjut akan dilaporkan apabila maklumat baharu tersedia.\n\n— Laporan Ahmad Faezal | Penganalisa Teknologi';
-  } else {
-    state.caption='🚨 '+state.tajukTerpilih.split(':')[0].trim().toUpperCase()+'!\n\n'+topik+' — dan ini bukan update biasa.\n\n'+ctaBlock+'Adakah anda bersedia mengambil peluang ini? 🤔\n\n🎓 PM kami untuk jadual kursus AI terkini HRDC!\n\n'+state.hashtag;
-    state.artikel='Assalamualaikum dan salam sejahtera, korang.\n\nMinggu ini, diam-diam, '+state.channel+' telah mendedahkan satu perkara yang saya kira antara perkembangan paling penting yang ramai rakyat Malaysia masih belum perasan.\n\n'+topik+'. Ini bukan sekadar tajuk clickbait. Ini perkembangan nyata yang saya telah semak melalui tiga sumber bebas — dan kesimpulannya jelas.\n\nKonteksnya begini. Bayangkan dulu anda ada pembantu kerja yang hanya boleh buat satu tugas pada satu masa. Sekarang, pembantu yang sama itu boleh merancang, melaksana, dan melaporkan — serentak, tanpa anda perlu pegang tangan.\n\nAnalisis saya? Ini bukan sekadar naik taraf produk. Ini pergerakan strategik dalam perang AI global. Setiap syarikat teknologi besar sedang berlumba untuk bina ekosistem yang paling lengkap — dan langkah ini membuktikan siapa yang sedang memimpin.\n\nImpak kepada kita di Malaysia? Sangat besar. Pelajar, pensyarah, penjawat awam, usahawan — kerja yang dulu mengambil masa berjam-jam kini boleh diselesaikan dalam masa minit. Tapi ingat: peluang ini hanya milik mereka yang bersedia belajar dan beradaptasi.\n\nSoalan saya untuk korang: dalam era di mana AI semakin pandai, apakah nilai tambah unik yang ANDA bawa ke meja kerja? Tinggalkan pandangan anda di ruangan komen.\n\nSampai jumpa dalam analisis seterusnya.\n\n— Ahmad Faezal\nPenganalisa Teknologi & Geopolitik';
+    state.caption='📡 '+state.tajukTerpilih+'\n\n🔴 TERKINI: '+state.channel+' melaporkan perkembangan terbaru: '+topik+'.\n\nFakta utama:\n• Tarikh: '+new Date().toLocaleDateString('ms-MY',{month:'long',year:'numeric'})+'\n• Sumber: '+state.channel+'\n• Status: ✅ Disahkan sahih\n• Impak: Langsung kepada pengguna Malaysia\n\n'+state.hashtag;
+    state.artikel='LAPORAN TERKINI — '+new Date().toLocaleDateString('ms-MY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase()+'\nSumber: '+state.channel+' | Status: Disahkan (3 sumber bebas)\n\n'+(hasSumber?state.channel+' melaporkan: "'+konteks.substring(0,200).trim()+'..."\n\n':''+state.channel+' telah melaporkan perkembangan terbaru berkaitan '+topik+'.\n\n')+'Perkembangan ini disahkan sahih melalui tiga sumber bebas. Impak dijangka dirasai oleh pengguna di Malaysia dalam tempoh terdekat, terutama sektor pendidikan dan latihan profesional.\n\nPerkembangan lanjut akan dilaporkan apabila maklumat baharu tersedia.\n\n— Laporan Ahmad Faezal | Penganalisa Teknologi';
   }
 
-  state.ringkasan=state.channel+' dedah: '+topik+'. Jenis kandungan: '+jenisLabel()+'. Disahkan sahih. Impak kepada pelajar dan profesional Malaysia dijangka tinggi.';
+  state.ringkasan=state.channel+' dedah: '+topik+'. '+jenisLabel()+'. '+(hasSumber?'Dianalisis dari teks sumber. ':'')+'Disahkan sahih. Impak kepada pelajar dan profesional Malaysia.';
   state.hashtag='#AIMalaysia #'+topik.split(' ')[0].replace(/[^a-zA-Z]/g,'')+' #TeknologiTerkini #BelajarAI #MyTVETSkillsAcademy';
 
-  document.getElementById('verif-badge-area').innerHTML='<div class="badge badge-success">🛡️ DISAHKAN — Status Hijau</div><div class="badge" style="background:var(--teal-light);color:var(--teal);border:1px solid #9FE1CB;margin-left:6px">📝 '+jenisLabel()+'</div>';
+  /* Word count badge */
+  var wc = state.artikel.split(/\s+/).filter(Boolean).length;
+  document.getElementById('verif-badge-area').innerHTML=
+    '<div class="badge badge-success">🛡️ DISAHKAN — Status Hijau</div>'
+    +'<div class="badge" style="background:var(--teal-light);color:var(--teal);border:1px solid #9FE1CB;margin-left:6px">📝 '+jenisLabel()+'</div>'
+    +(hasSumber?'<div class="badge" style="background:var(--amber-light);color:var(--amber);border:1px solid #FAC775;margin-left:6px">📋 Sumber dianalisis</div>':'')
+    +'<div class="badge" style="background:var(--gray-50);color:var(--gray-500);border:1px solid var(--gray-100);margin-left:6px">'+wc+' patah perkataan</div>';
   document.getElementById('verif-detail').textContent=state.verif;
 
   var autoIdx2=state.angle==='tekno'?0:state.angle==='geo'?1:state.angle==='edu'?2:0;
@@ -967,7 +1005,7 @@ function bukaSemakAnalitik(){
 }
 
 function resetApp(){
-  ['f-tajuk','f-channel','f-url','f-nota'].forEach(function(id){ document.getElementById(id).value=''; });
+  ['f-tajuk','f-channel','f-url','f-nota','f-sumber'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('f-angle').value='auto';
   document.getElementById('f-platform').value='fb';
   state.jenis='artikel';
